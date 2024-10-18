@@ -1,16 +1,5 @@
 # Chat App
 
-![Chat App Features](assets/chat-app-features.png "Chat App Features")
-
-A simple and interactive chat application with a variety of social features, designed to make online communication easier and more engaging.
-
-## Features
-...
-
-
-
-# Chat App
-
 A simple and interactive chat application with a variety of social features, designed to make online communication easier and more engaging.
 
 ## Features
