@@ -1,11 +1,8 @@
-import React from 'react';
+import React from 'react'
+import AppLayout from '../../components/layout'
 
 const Chats = () => {
-  return (
-    <div>
-      chats
-    </div>
-  );
+  return <div>chats</div>
 }
 
-export default Chats;
+export default AppLayout()(Chats)
