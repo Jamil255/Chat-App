@@ -9,7 +9,6 @@ const AppLayout = () => (WrappedComponent) => {
         <Tittle />
         <Header />
         <WrappedComponent {...props} />
-        <div>Footer</div>
       </>
     )
   }
