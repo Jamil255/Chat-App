@@ -1,6 +1,7 @@
-import React, { lazy } from 'react'
+import React, { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import ProtectedRoute from './routes'
+import { dividerClasses } from '@mui/material'
 const Home = lazy(() => import('./pages/home/index'))
 const Login = lazy(() => import('./pages/login'))
 const Chat = lazy(() => import('./pages/chats/index'))
@@ -10,22 +11,24 @@ const App = () => {
   let user = true
   return (
     <BrowserRouter>
-      <Routes>
-        <Route element={<ProtectedRoute user={user} />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/chat/:chatId" element={<Chat />} />
-          <Route path="/group" element={<Group />} />
-        </Route>
-        <Route
-          path="/login"
-          element={
-            <ProtectedRoute user={!user} redirect="/">
-              <Login />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <Suspense fallback={<div>Loading....</div>}>
+        <Routes>
+          <Route element={<ProtectedRoute user={user} />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/chat/:chatId" element={<Chat />} />
+            <Route path="/group" element={<Group />} />
+          </Route>
+          <Route
+            path="/login"
+            element={
+              <ProtectedRoute user={!user} redirect="/">
+                <Login />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   )
 }

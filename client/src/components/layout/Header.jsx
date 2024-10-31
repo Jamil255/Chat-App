@@ -1,5 +1,5 @@
 import { AppBar, Box, IconButton, Toolbar, Typography } from '@mui/material'
-import React from 'react'
+import React, { lazy, Suspense, useState } from 'react'
 import { organe } from '../../constants'
 import {
   Menu as MenuIcon,
@@ -7,24 +7,36 @@ import {
   Logout as LogoutIcon,
   Group as GroupIcon,
   Add as AddIcon,
+  Notifications as NotificationsIcon,
 } from '@mui/icons-material'
 import IconBtn from '../IconBtn'
+const SearchDialog = lazy(() => import('../Search'))
+const NotificationDialog = lazy(() => import('../Notification'))
+const NewGroupDialog = lazy(() => import('../NewGroup'))
 
 const Header = () => {
+  const [isMobile, setIsMobile] = useState(false)
+  const [isSearch, setIsSearch] = useState(false)
+  const [isNotification, setIsNotification] = useState(false)
+  const [isNewGroup, setIsNewGroup] = useState(false)
+
   const handleMobile = () => {
-    console.log('handleMobile')
+    setIsMobile(!isMobile)
   }
   const openSearch = () => {
-    console.log('openSearch')
+    setIsSearch((pre) => !pre)
   }
   const openNewGroup = () => {
-    console.log('openNewGroup')
+    setIsNewGroup((pre) => !pre)
   }
   const navigateToGroup = () => {
     console.log('navigateToGroup')
   }
   const logoutHandler = () => {
     console.log('logoutHandler')
+  }
+  const openNotification = () => {
+    setIsNotification((prev) => !prev)
   }
   return (
     <>
@@ -64,12 +76,11 @@ const Header = () => {
                 icon={<GroupIcon />}
                 onClick={navigateToGroup}
               />
-              {/* <IconBtn
-                title={"Notifications"}
+              <IconBtn
+                title={'Notifications'}
                 icon={<NotificationsIcon />}
                 onClick={openNotification}
-                value={notificationCount}
-              /> */}
+              />
 
               <IconBtn
                 title={'Logout'}
@@ -80,6 +91,21 @@ const Header = () => {
           </Toolbar>
         </AppBar>
       </Box>
+      {isSearch && (
+        <Suspense fallback={<div>Loading....</div>}>
+          {<SearchDialog />}
+        </Suspense>
+      )}
+      {isNewGroup && (
+        <Suspense fallback={<div>Loading....</div>}>
+          {<NewGroupDialog />}
+        </Suspense>
+      )}
+      {isNotification && (
+        <Suspense fallback={<div>Loading....</div>}>
+          <NotificationDialog />
+        </Suspense>
+      )}
     </>
   )
 }
