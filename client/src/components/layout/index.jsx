@@ -5,6 +5,7 @@ import { Grid } from '@mui/material'
 import ChatList from '../ChatList'
 import { samepleChats } from '../../constants/sampleData'
 import { useParams } from 'react-router-dom'
+import Profile from '../Profile'
 // it is HOC high order components take a component as a argument and return a new component
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
@@ -55,7 +56,7 @@ const AppLayout = () => (WrappedComponent) => {
               padding: '4rem',
             }}
           >
-            third
+           <Profile/>
           </Grid>
         </Grid>
       </>

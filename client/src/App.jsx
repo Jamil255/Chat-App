@@ -9,7 +9,7 @@ const Chat = lazy(() => import('./pages/chats/index'))
 const Group = lazy(() => import('./pages/groups/index'))
 const NotFound = lazy(() => import('./pages/notfound/index'))
 const App = () => {
-  let user = true
+  let user = true 
   return (
     <BrowserRouter>
       <Suspense fallback={<AppLayoutLoader/>}>
