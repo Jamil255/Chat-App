@@ -9,31 +9,33 @@ const AppLayout = () => (WrappedComponent) => {
       <>
         <Tittle />
         <Header />
-        <Grid sx={{ display: 'flex',gap:55, height: 'calc(100vh - 4rem)' }}>
+        <Grid container height="100vh" alignItems="stretch">
           <Grid
             item
             sm={4}
             md={3}
-            sx={{ display: { xs: 'none', sm: 'block' } }}
-            height={'100%'}
+            sx={{
+              display: { xs: 'none', sm: 'block' },
+              height: '100%',
+            }}
           >
-            frist
+            first
           </Grid>
-          <Grid item xs={12} sm={8} md={5} lg={12} height={'100%'}>
+          <Grid item xs={12} sm={8} md={5} lg={6} sx={{ height: '100%' }}>
             <WrappedComponent {...props} />
           </Grid>
           <Grid
             item
             md={4}
             lg={3}
-            height={'100%'}
             sx={{
               display: { xs: 'none', md: 'block' },
+              height: '100%',
               bgcolor: 'rgba(0,0,0,0.85)',
               padding: '4rem',
             }}
           >
-            thrid
+            third
           </Grid>
         </Grid>
       </>
