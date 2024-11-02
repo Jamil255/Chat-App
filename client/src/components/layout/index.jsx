@@ -2,9 +2,18 @@ import React from 'react'
 import Header from './Header'
 import Tittle from '../shared/tittle'
 import { Grid } from '@mui/material'
+import ChatList from '../ChatList'
+import { samepleChats } from '../../constants/sampleData'
+import { useParams } from 'react-router-dom'
 // it is HOC high order components take a component as a argument and return a new component
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
+    const { chatId } = useParams()
+    const handleChatDelete = (e, _id, groupChat) => {
+      e.prevenetDefualt()
+      console.log(_id, groupChat)
+    }
+
     return (
       <>
         <Tittle />
@@ -19,7 +28,18 @@ const AppLayout = () => (WrappedComponent) => {
               height: '100%',
             }}
           >
-            first
+            <ChatList
+              chats={samepleChats}
+              chatId={chatId}
+              newMessagesAlert={[
+                {
+                  chatId,
+                  count: 4,
+                },
+              ]}
+              onlineUsers={['1', '2', '3']}
+              handleChatDelete={handleChatDelete}
+            />
           </Grid>
           <Grid item xs={12} sm={8} md={5} lg={6} sx={{ height: '100%' }}>
             <WrappedComponent {...props} />
