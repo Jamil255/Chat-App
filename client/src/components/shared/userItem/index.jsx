@@ -1,5 +1,5 @@
 import { Avatar, ListItem, Stack, Typography, IconButton } from '@mui/material'
-import React from 'react'
+import React, { memo } from 'react'
 import { Add as AddIcon } from '@mui/icons-material'
 
 const UserItem = ({ user, handler, handlerIsLoading }) => {
@@ -46,4 +46,4 @@ const UserItem = ({ user, handler, handlerIsLoading }) => {
   )
 }
 
-export default UserItem
+export default memo(UserItem)
