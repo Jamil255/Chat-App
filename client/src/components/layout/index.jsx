@@ -42,6 +42,7 @@ const AppLayout = () => (WrappedComponent) => {
               handleChatDelete={handleChatDelete}
             />
           </Grid>
+ 
           <Grid item xs={12} sm={8} md={5} lg={6} sx={{ height: '100%' }}>
             <WrappedComponent {...props} />
           </Grid>
@@ -56,7 +57,7 @@ const AppLayout = () => (WrappedComponent) => {
               padding: '4rem',
             }}
           >
-           <Profile/>
+            <Profile />
           </Grid>
         </Grid>
       </>

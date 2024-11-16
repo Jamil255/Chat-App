@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@mui/material'
 import { CameraAlt as CameraAltIcon } from '@mui/icons-material'
-import VisuallyHiddenInput from '../../components/styles/StyleComponent'
+import {VisuallyHiddenInput} from '../../components/styles/StyleComponent'
 import { useFileHandler, useInputValidation, useStrongPassword } from '6pp'
 import { usernameValidator } from '../../utills/validators'
 
