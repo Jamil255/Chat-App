@@ -1,8 +1,8 @@
 import { Avatar, ListItem, Stack, Typography, IconButton } from '@mui/material'
 import React, { memo } from 'react'
-import { Add as AddIcon } from '@mui/icons-material'
+import { Add as AddIcon, Remove } from '@mui/icons-material'
 
-const UserItem = ({ user, handler, handlerIsLoading }) => {
+const UserItem = ({ user, handler, handlerIsLoading ,isAdded=false }) => {
   const { name, _id, avatar } = user
   return (
     <ListItem>
@@ -39,7 +39,7 @@ const UserItem = ({ user, handler, handlerIsLoading }) => {
           onClick={() => handler(_id)}
           disabled={handlerIsLoading}
         >
-          <AddIcon />
+         {isAdded ?<Remove/>:<AddIcon/>}
         </IconButton>
       </Stack>
     </ListItem>

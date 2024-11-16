@@ -2,7 +2,7 @@ import { Avatar, Button, ListItem, Stack, Typography } from '@mui/material'
 import React, { memo, useMemo } from 'react'
 
 const NotificationItem = ({ sender, _id, handler }) => {
-  const { name, avatar } = sender
+  const { name, avatar } = sender?.sender
   return (
     <ListItem>
       <Stack

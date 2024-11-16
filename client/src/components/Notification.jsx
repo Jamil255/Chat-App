@@ -6,13 +6,12 @@ import {
   Typography,
   IconButton,
 } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
+import CloseIcon from '@mui/icons-material/Close';
 import NotificationItem from './shared/notificationItem'
 import { sampleNotifications } from '../constants/sampleData'
 
 const Notification = ({ onClose }) => {
   const friendRequestHandler = (_id, accept) => {
-    console.log(_id, accept)
   }
 
   return (
