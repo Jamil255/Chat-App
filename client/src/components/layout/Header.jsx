@@ -17,6 +17,7 @@ import {
   Notifications as NotificationsIcon,
 } from '@mui/icons-material'
 import IconBtn from '../IconBtn'
+
 const SearchDialog = lazy(() => import('../Search'))
 const NotificationDialog = lazy(() => import('../Notification'))
 const NewGroupDialog = lazy(() => import('../NewGroup'))
@@ -30,21 +31,38 @@ const Header = () => {
   const handleMobile = () => {
     setIsMobile(!isMobile)
   }
+
   const openSearch = () => {
-    setIsSearch((pre) => !pre)
+    setIsSearch((prev) => !prev)
   }
+
   const openNewGroup = () => {
-    setIsNewGroup((pre) => !pre)
+    setIsNewGroup((prev) => !prev)
   }
+
   const navigateToGroup = () => {
     console.log('navigateToGroup')
   }
+
   const logoutHandler = () => {
     console.log('logoutHandler')
   }
+
   const openNotification = () => {
     setIsNotification((prev) => !prev)
   }
+
+  const closeNotification = () => {
+    setIsNotification(false) // Close notification dialog
+  }
+
+  const closeSearch = () => {
+    setIsSearch(false) // Close notification dialog
+  }
+  const closeNewGroup = () => {
+    setIsNewGroup(false) // Close notification dialog
+  }
+
   return (
     <>
       <Box sx={{ flexFlow: 1 }} height={'4rem'}>
@@ -88,7 +106,6 @@ const Header = () => {
                 icon={<NotificationsIcon />}
                 onClick={openNotification}
               />
-
               <IconBtn
                 title={'Logout'}
                 icon={<LogoutIcon />}
@@ -98,15 +115,22 @@ const Header = () => {
           </Toolbar>
         </AppBar>
       </Box>
+
       {isSearch && (
-        <Suspense fallback={<Backdrop open />}>{<SearchDialog />}</Suspense>
+        <Suspense fallback={<Backdrop open />}>
+          <SearchDialog onClose={closeSearch} />
+        </Suspense>
       )}
+
       {isNewGroup && (
-        <Suspense fallback={<Backdrop open />}>{<NewGroupDialog />}</Suspense>
+        <Suspense fallback={<Backdrop open />}>
+          <NewGroupDialog onClose={closeNewGroup} />
+        </Suspense>
       )}
+
       {isNotification && (
         <Suspense fallback={<Backdrop open />}>
-          <NotificationDialog />
+          <NotificationDialog onClose={closeNotification} />
         </Suspense>
       )}
     </>

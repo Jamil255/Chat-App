@@ -1,10 +1,9 @@
 import {
   Dialog,
   DialogTitle,
+  IconButton,
   InputAdornment,
   List,
-  ListItem,
-  ListItemText,
   Stack,
   TextField,
 } from '@mui/material'
@@ -13,8 +12,8 @@ import { Search as SearchIcon } from '@mui/icons-material'
 import { useInputValidation } from '6pp'
 import UserItem from './shared/userItem'
 import { sampleUsers } from '../constants/sampleData'
-const user = [1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-const Search = () => {
+import CloseIcon from '@mui/icons-material/Close'
+const Search = ({ onClose }) => {
   const [user, setUser] = useState(sampleUsers)
   const search = useInputValidation()
   const addFriendHandler = (id) => {
@@ -23,9 +22,23 @@ const Search = () => {
   const isLoadingSendFriendRequest = false
 
   return (
-    <Dialog open>
+    <Dialog open onClose={onClose}>
       <Stack p={'2rem'} direction={'column'} width={'25rem'}>
-        <DialogTitle textAlign={'center'}> Find People</DialogTitle>
+        <DialogTitle textAlign={'center'}>
+          {' '}
+          Find People
+          <IconButton
+            aria-label="close"
+            onClick={onClose}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
         <TextField
           label=""
           value={search.value}
