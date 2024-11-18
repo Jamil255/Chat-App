@@ -22,7 +22,9 @@ const NewGroup = ({ onClose }) => {
         : [...prev, id]
     )
   }
-  const submitHandler = () => {}
+  const submitHandler = () => {
+    console.log('submitHandler')
+  }
   return (
     <Dialog
       open
