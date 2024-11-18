@@ -1,13 +1,18 @@
 import React, { useRef } from 'react'
 import AppLayout from '../../components/layout'
 import { IconButton, Stack } from '@mui/material'
-import { grayColor, organe } from '../../constants'
+import { grayColor, orange } from '../../constants/color.js'
 import {
   AttachFile as AttachFileIcon,
   Send as SendIcon,
 } from '@mui/icons-material'
 import { InputBox } from '../../components/styles/StyleComponent'
-
+import { sampleMessage } from '../../constants/sampleData'
+import MessageComponent from '../../components/shared/messageComponent'
+const user = {
+  _id: 'jjdhhdnnnnjdnf',
+  name: 'jamil afzal mughal',
+}
 const Chats = () => {
   const containerRef = useRef(null)
   return (
@@ -24,7 +29,9 @@ const Chats = () => {
           backgroundColor: grayColor,
         }}
       >
-        {/* {message Render} */}
+        {sampleMessage?.map((i) => (
+          <MessageComponent message={i} user={user} key={i._id} />
+        ))}
       </Stack>
       <form
         style={{
@@ -50,7 +57,7 @@ const Chats = () => {
           <InputBox placeholder=" Type Message  Here.." />
           <IconButton
             sx={{
-              bgcolor: organe,
+              bgcolor: orange,
               color: 'white',
               marginLeft: '1rem',
               padding: '0.5rem',

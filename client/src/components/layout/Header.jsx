@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@mui/material'
 import React, { lazy, Suspense, useState } from 'react'
-import { organe } from '../../constants'
+import { orange } from '../../constants/color.js'
 import {
   Menu as MenuIcon,
   Search as SearchIcon,
@@ -69,7 +69,7 @@ const Header = () => {
         <AppBar
           position="static"
           sx={{
-            bgcolor: organe,
+            bgcolor: orange,
           }}
         >
           <Toolbar>

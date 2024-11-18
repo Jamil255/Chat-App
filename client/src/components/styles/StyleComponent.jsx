@@ -1,6 +1,6 @@
 import { Skeleton, keyframes, styled } from '@mui/material'
 import { Link as LinkComponent } from 'react-router-dom'
-import { grayColor } from '../../constants';
+import { grayColor } from '../../constants/color'
 // import { grayColor, matBlack } from "../../constants/color";
 
 const VisuallyHiddenInput = styled('input')({
@@ -24,17 +24,17 @@ const Link = styled(LinkComponent)`
   }
 `
 
-const InputBox = styled("input")`
+const InputBox = styled('input')`
   width: 100%;
   height: 100%;
   border: none;
   outline: none;
-  padding:1.7rem;
+  padding: 1.7rem;
   border-radius: 1.5rem;
   background-color: ${grayColor};
-`;
+`
 
-const SearchField = styled("input")`
+const SearchField = styled('input')`
   padding: 1rem 2rem;
   width: 20vmax;
   border: none;
@@ -42,7 +42,7 @@ const SearchField = styled("input")`
   border-radius: 1.5rem;
   background-color: ${grayColor};
   font-size: 1.1rem;
-`;
+`
 
 // const CurveButton = styled("button")`
 //   border-radius: 1.5rem;
@@ -56,7 +56,7 @@ const SearchField = styled("input")`
 //   &:hover {
 //     background-color: rgba(0, 0, 0, 0.8);
 //   }
-`;
+;`;
 
 // const bounceAnimation = keyframes`
 // 0% { transform: scale(1); }
@@ -69,10 +69,10 @@ const SearchField = styled("input")`
 // }));
 
 export {
-    // CurveButton,
-    SearchField,
-    InputBox,
+  // CurveButton,
+  SearchField,
+  InputBox,
   Link,
   VisuallyHiddenInput,
-    // BouncingSkeleton,
+  // BouncingSkeleton,
 }

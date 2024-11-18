@@ -1,8 +1,7 @@
 import React from 'react'
 import AppLayout from '../../components/layout'
 import { Box, Typography } from '@mui/material'
-import { Height } from '@mui/icons-material'
-import { grayColor } from '../../constants'
+import { grayColor } from '../../constants/color.js'
 
 const Home = () => {
   return (
@@ -10,7 +9,6 @@ const Home = () => {
       sx={{
         bgcolor: grayColor,
       }}
-      border={'1px solid red'}
       height={'100%'}
     >
       <Typography p={'2rem'} variant="h5" textAlign={'center'}>
