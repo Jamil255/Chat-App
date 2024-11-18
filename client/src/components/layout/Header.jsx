@@ -17,6 +17,7 @@ import {
   Notifications as NotificationsIcon,
 } from '@mui/icons-material'
 import IconBtn from '../IconBtn'
+import { useNavigate } from 'react-router-dom'
 
 const SearchDialog = lazy(() => import('../Search'))
 const NotificationDialog = lazy(() => import('../Notification'))
@@ -27,7 +28,7 @@ const Header = () => {
   const [isSearch, setIsSearch] = useState(false)
   const [isNotification, setIsNotification] = useState(false)
   const [isNewGroup, setIsNewGroup] = useState(false)
-
+const navigate=useNavigate()
   const handleMobile = () => {
     setIsMobile(!isMobile)
   }
@@ -40,9 +41,7 @@ const Header = () => {
     setIsNewGroup((prev) => !prev)
   }
 
-  const navigateToGroup = () => {
-    console.log('navigateToGroup')
-  }
+  const navigateToGroup = () =>navigate("/group") 
 
   const logoutHandler = () => {
     console.log('logoutHandler')

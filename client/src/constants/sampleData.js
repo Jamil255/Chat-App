@@ -75,6 +75,22 @@ export const sampleMessage = [
     chat: 'chatId',
     createdAt: '2024-02-12T10:41:30.630Z',
   },
+  {
+    attachments: [
+      {
+        public_id: 'asdsad 2',
+        url: 'https://i.pinimg.com/736x/be/4f/c5/be4fc5db3efb38e2030216bb0bef69c1.jpg',
+      },
+    ],
+    content:'',
+    _id: 'sfnsdjnnnnkfsmdnfkdddjsbnd',
+    sender: {
+      _id: 'jjdhhdnnnnjdnf',
+      name: 'jamil afzal',
+    },
+    chat: 'chatId',
+    createdAt: '2024-02-12T10:41:30.630Z',
+  },
 ]
 
 export const dashboardData = {

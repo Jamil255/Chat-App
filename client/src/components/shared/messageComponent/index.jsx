@@ -33,7 +33,6 @@ const MessageComponent = ({ message, user }) => {
       {attachments?.length > 0 &&
         attachments.map((attach, index) => {
           const url = attach.url
-          console.log(url)
           const file = fileFormat(url)
           return (
             <Box key={index}>
