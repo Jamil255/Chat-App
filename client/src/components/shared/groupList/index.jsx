@@ -1,9 +1,14 @@
 import { Stack, Typography } from '@mui/material'
 import React from 'react'
 import GroupListItem from '../groupItem'
+import { bgGradient } from '../../../constants/color'
 const GroupList = ({ width = '100%', myGroups = [], chatId }) => {
   return (
-    <Stack>
+    <Stack width={width}    sx={{
+        backgroundImage: bgGradient,
+        height: "100vh",
+        overflow: "auto",
+      }}>
       {myGroups?.length>0 ? (
         myGroups.map((group) => <GroupListItem  group={group} chatId={chatId} key={group._id} />)
       ) : (
