@@ -1,14 +1,20 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { bgGradient } from '../../constants/color'
 import { Button, Container, Paper, TextField, Typography } from '@mui/material'
 import { useInputValidation, useStrongPassword } from '6pp'
+import { useNavigate } from 'react-router-dom'
 
+const isAdmin = true
 const AdminLogin = () => {
   const sceretKey = useStrongPassword()
+  const navigate = useNavigate()
   const handleAdminLogin = (e) => {
     e.preventDefault()
     console.log('sceret key', sceretKey.value)
   }
+    useEffect(() => {
+        if (isAdmin) navigate("/admin/dashboard")
+ },[])
   return (
     <div
       style={{

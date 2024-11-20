@@ -1,5 +1,5 @@
 import React from 'react'
-import AppLayout from '../../components/layout'
+import AppLayout from '../../components/layout/AppLayout.jsx'
 import { Box, Typography } from '@mui/material'
 import { grayColor } from '../../constants/color.js'
 

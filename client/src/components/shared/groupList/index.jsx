@@ -21,3 +21,4 @@ const GroupList = ({ width = '100%', myGroups = [], chatId }) => {
 }
 
 export default GroupList
+ 

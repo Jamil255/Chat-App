@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import AppLayout from '../../components/layout'
+import AppLayout from '../../components/layout/AppLayout.jsx'
 import { IconButton, Stack } from '@mui/material'
 import { grayColor, orange } from '../../constants/color.js'
 import {
