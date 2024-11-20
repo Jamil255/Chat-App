@@ -6,14 +6,7 @@ import {
   Notifications as NotificationsIcon,
   Person as PersonIcon,
 } from '@mui/icons-material'
-import {
-  Box,
-  Container,
-  Paper,
-  Skeleton,
-  Stack,
-  Typography,
-} from '@mui/material'
+import { Box, Container, Paper, Stack, Typography } from '@mui/material'
 import moment from 'moment'
 import React from 'react'
 import {
@@ -47,7 +40,16 @@ const Dashboard = () => {
           {moment().format('dddd, D MMMM YYYY')}
         </Typography>
 
-        <NotificationsIcon />
+        <Stack
+          sx={{
+            display: 'block', // Default display
+            '@media (max-width: 425px)': {
+              display: 'none', // Hide when screen width is 425px or smaller
+            },
+          }}
+        >
+          <NotificationsIcon />
+        </Stack>
       </Stack>
     </Paper>
   )
