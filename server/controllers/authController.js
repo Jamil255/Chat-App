@@ -100,5 +100,20 @@ const loginController = async (req, res) => {
     })
   }
 }
+const getMyProfileHandlder = async (req, res) => {
+  try {
+    const data = await userModel.findById(req.user)
+    return res.json({
+      message: 'user data is successfully load',
+      data,
+      status: true,
+    })
+  } catch (error) {
+    res.json({
+      message: error.message,
+      status: false,
+    })
+  }
+}
 
-export { loginController, signupController }
+export { loginController, signupController, getMyProfileHandlder }
