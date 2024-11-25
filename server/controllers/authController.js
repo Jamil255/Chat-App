@@ -50,7 +50,6 @@ const signupController = async (req, res) => {
       status: true,
     })
   } catch (error) {
-    console.error('Signup Error:', error.message)
     res.status(500).json({
       message: error.message,
       status: 'error',
@@ -75,7 +74,6 @@ const loginController = async (req, res) => {
       })
     }
     const hashPass = await bcrypt.compare(password, user?.password)
-    console.log(hashPass)
 
     if (!hashPass) {
       return res.status(401).json({
@@ -116,4 +114,15 @@ const getMyProfileHandlder = async (req, res) => {
   }
 }
 
-export { loginController, signupController, getMyProfileHandlder }
+const logoutHandler = (req, res) => {
+  res.cookie('token', '', { ...cookieOptions, maxAge: 0 }).json({
+    message: 'logout successfully',
+  })
+}
+
+export {
+  loginController,
+  signupController,
+  getMyProfileHandlder,
+  logoutHandler,
+}
