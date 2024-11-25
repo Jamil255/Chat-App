@@ -1,0 +1,10 @@
+import { v2 as cloudinary } from 'cloudinary'
+const cloudinaryConfig = () =>
+  cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_KEY_SECRET,
+  })
+
+const cloudinaryUploader = cloudinary.uploader
+export { cloudinaryUploader, cloudinaryConfig }
