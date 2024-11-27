@@ -4,6 +4,7 @@ A simple and interactive chat application with a variety of social features, des
 ## Features
 
 
+
 The Chat App includes the following main features:
 
 1. **User Registration/Login**: 
