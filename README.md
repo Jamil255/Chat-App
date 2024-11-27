@@ -1,8 +1,8 @@
 # Chat App
 
 A simple and interactive chat application with a variety of social features, designed to make online communication easier and more engaging.
-
 ## Features
+
 
 
 The Chat App includes the following main features:
