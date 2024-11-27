@@ -119,10 +119,18 @@ const logoutHandler = (req, res) => {
     message: 'logout successfully',
   })
 }
+const searchHandler = (req, res) => {
+  const { name } = req.query
+  res.json({
+    message: name,
+    status: true,
+  })
+}
 
 export {
   loginController,
   signupController,
   getMyProfileHandlder,
   logoutHandler,
+  searchHandler,
 }

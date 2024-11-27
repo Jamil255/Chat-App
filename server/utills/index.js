@@ -5,6 +5,10 @@ export const cookieOptions = {
   httpOnly: true,
   secure: true,
 }
+
+export const emitEvent = (req, event, users, data) => {
+  console.log(event)
+}
 // export const jwtToken = async (_id, userName) => {
 //   const token = await jwt.sign({ _id, userName }, process.env.SECRET_KEY)
 //   return token
