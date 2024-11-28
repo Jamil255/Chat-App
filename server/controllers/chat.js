@@ -1,5 +1,6 @@
 import { ALERT, REFETCH_CHATS } from '../constants/event.js'
 import chatModel from '../models/chatSchema.js'
+import userModel from '../models/userSchema.js'
 import { emitEvent } from '../utills/index.js'
 import { getOtherMember } from '../utills/feature.js'
 const newGroupChat = async (req, res) => {
@@ -95,7 +96,7 @@ const getMyGroup = async (req, res) => {
       _id,
       name,
       groupChat,
-      avatar: members?.slice(0, 3).map(({avatar}) => avatar.url),
+      avatar: members?.slice(0, 3).map(({ avatar }) => avatar.url),
     }))
     res.status(200).json({
       groups,
@@ -108,4 +109,175 @@ const getMyGroup = async (req, res) => {
     })
   }
 }
-export { newGroupChat, getMyChats, getMyGroup }
+const addMember = async (req, res) => {
+  try {
+    const { chatId, members } = req.body
+    const chat = await chatModel.findById(chatId)
+    if (!chat) {
+      return res.status(404).json({
+        message: 'chat is not found',
+        status: false,
+      })
+    }
+    if (!chat.groupChat) {
+      return res.status(404).json({
+        message: 'this is not group chat ',
+        status: false,
+      })
+    }
+    if (chat?.creator?.toString() !== req.user.toString()) {
+      return res.status(403).json({
+        message: 'you are  not allow to add member',
+        status: false,
+      })
+    }
+    const allNewMembersPromise = members?.map((i) =>
+      userModel.findById(i, 'name')
+    )
+    const allNewMembers = await Promise.all(allNewMembersPromise)
+    const uniqueMembers = allNewMembers
+      .filter((i) => !chat.members.includes(i._id.toString()))
+      .map((i) => i._id)
+    chat.members.push(...uniqueMembers)
+    if (chat?.members?.length > 100) {
+      return res.status(400).json({
+        message: 'Group limit is reach 100',
+        status: false,
+      })
+    }
+    await chat.save()
+    const allUsersName = allNewMembers.map((i) => i.name).join(', ')
+    emitEvent(
+      req,
+      ALERT,
+      chat?.members,
+      `${allUsersName} has been added in the group`
+    )
+
+    emitEvent(req, REFETCH_CHATS, chat?.members)
+
+    res.status(200).json({
+      status: true,
+      message: 'member add is successfully',
+    })
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+      status: false,
+    })
+  }
+}
+
+const removeMember = async (req, res) => {
+  try {
+    const { userId, chatId } = req.body
+    const [chat, userThatWillBeRemove] = await Promise.all([
+      chatModel.findById(chatId),
+      userModel.findById(userId, 'name'),
+    ])
+    if (!chat) {
+      return res.status(400).json({
+        message: 'chat is not found ',
+        status: false,
+      })
+    }
+    if (!chat?.groupChat) {
+      return res.status(404).json({
+        message: 'this is not group chat ',
+        status: false,
+      })
+    }
+    if (chat?.creator?.toString() !== req.user.toString()) {
+      return res.status(403).json({
+        message: 'you are not allow to leave member',
+        status: false,
+      })
+    }
+    if (chat?.members?.length <= 3) {
+      return res.status(400).json({
+        message: 'Group  are must at least 3 members ',
+        status: false,
+      })
+    }
+    const allChatMember = chat?.members?.map((i) => i.toString())
+
+    chat.members = chat.members.filter(
+      (member) => member.toString() !== userId.toString()
+    )
+    await chat.save()
+    emitEvent(req, ALERT, chat.members, {
+      message: `${userThatWillBeRemove?.name} has been removed from the group`,
+      chatId,
+    })
+
+    emitEvent(req, REFETCH_CHATS, allChatMember)
+    res.status(200).json({
+      message: 'group leave sucessfully',
+      status: true,
+    })
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+      status: false,
+    })
+  }
+}
+
+const leaveGroup = async (req, res) => {
+  try {
+    const chatId = req.params.id
+    const chat = await chatModel.findById(chatId)
+    if (!chat) {
+      return res.status(400).json({
+        message: 'chat is not found',
+        status: false,
+      })
+    }
+    if (!chat?.groupChat) {
+      return res.status(400).json({
+        message: 'this  is not group chat',
+        status: false,
+      })
+    }
+    const remainingMembers = chat?.members?.filter(
+      (member) => member.toString() !== req.user.toString()
+    )
+    if (remainingMembers?.length < 3) {
+      return res.status(400).json({
+        message: 'group are must  at least 3 member',
+        status: false,
+      })
+    }
+    if (chat?.creator.toString() == req?.user.toString()) {
+      const randomElem = Math.floor(Math.random() * remainingMembers.length)
+      const newCreator = remainingMembers[randomElem]
+      chat.creator = newCreator
+    }
+    chat.members = remainingMembers
+    const [user] = await Promise.all([
+      userModel.findById(req.user, 'name'),
+      chat.save(),
+    ])
+    emitEvent(req, ALERT, chat?.members, {
+      chatId,
+      message: `User ${user?.name} has left the group`,
+    })
+    res.status(200).json({
+      message: 'Leave the group successfully',
+      status: true,
+    })
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+      status: false,
+    })
+  }
+}
+export {
+  newGroupChat,
+  getMyChats,
+  getMyGroup,
+  addMember,
+  removeMember,
+  leaveGroup,
+}
