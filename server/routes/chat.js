@@ -7,7 +7,9 @@ import {
   addMember,
   removeMember,
   leaveGroup,
+  sendAttachment,
 } from '../controllers/chat.js'
+import upload from '../middleware/multer.js'
 const app = express()
 
 app.use(isAuthenticated)
@@ -17,5 +19,6 @@ app.get('/mygroup', getMyGroup)
 app.put('/addmember', addMember)
 app.put('/removemember', removeMember)
 app.delete('/delete/:id', leaveGroup)
+app.post('/message', upload.array('files', 5), sendAttachment)
 
 export default app

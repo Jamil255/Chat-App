@@ -1,8 +1,16 @@
-import { ALERT, REFETCH_CHATS } from '../constants/event.js'
+import {
+  ALERT,
+  NEW_MESSAGE,
+  NEW_MESSAGE_ALERT,
+  REFETCH_CHATS,
+} from '../constants/event.js'
 import chatModel from '../models/chatSchema.js'
 import userModel from '../models/userSchema.js'
 import { emitEvent } from '../utills/index.js'
 import { getOtherMember } from '../utills/feature.js'
+import { cloudinaryUploader } from '../config/CloudinaryConfig.js'
+import messageModel from '../models/messageSchema.js'
+import fs from"fs"
 const newGroupChat = async (req, res) => {
   try {
     const { name, members } = req.body
@@ -273,6 +281,102 @@ const leaveGroup = async (req, res) => {
     })
   }
 }
+const sendAttachment = async (req, res) => {
+    try {
+      const { chatId } = req.body;
+      const files = req.files || [];
+  
+      // Validate file count
+      if (files.length < 1) {
+        return res.status(400).json({
+          message: 'Please upload attachments',
+          status: false,
+        });
+      }
+      if (files.length > 5) {
+        return res.status(400).json({
+          message: "You can't upload more than 5 files",
+          status: false,
+        });
+      }
+  
+      // Validate chat and user
+      const [chat, me] = await Promise.all([
+        chatModel.findById(chatId),
+        userModel.findById(req.user, 'name'),
+      ]);
+      if (!chat) {
+        return res.status(400).json({
+          message: 'Chat not found',
+          status: false,
+        });
+      }
+  
+      // Upload files
+      const uploadedAttachments = [];
+      for (const file of files) {
+        try {
+          const result = await cloudinaryUploader.upload(file?.path);
+          uploadedAttachments.push({
+            publicId: result.public_id,
+            url: result.secure_url,
+          });
+          fs.unlink(file?.path, (error) => {
+            if (error) console.error('Error deleting file:', error.message);
+          });
+        } catch (uploadError) {
+          console.error('Cloudinary Upload Error:', uploadError.message);
+        }
+      }
+  
+      // Check if attachments are uploaded
+      if (uploadedAttachments.length === 0) {
+        return res.status(400).json({
+          message: 'No files were uploaded',
+          status: false,
+        });
+      }
+  
+      // Construct message
+      const messageForDB = {
+        attachments: uploadedAttachments,
+        content: '',
+        chat: chatId,
+        sender: me._id,
+      };
+  
+      const messageForRealTime = {
+        ...messageForDB,
+        sender: {
+          _id: me?._id,
+          name: me?.name,
+        },
+      };
+  
+      const message = await messageModel.create(messageForDB);
+  
+      // Emit real-time events
+      emitEvent(req, NEW_MESSAGE, chat?.members, {
+        message: messageForRealTime,
+        chatId,
+      });
+      emitEvent(req, NEW_MESSAGE_ALERT, chat?.members, { chatId });
+  
+      res.status(200).json({
+        message: 'Files uploaded successfully',
+        message,
+        status: true,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        message: error.message,
+        status: false,
+      });
+    }
+  };
+  
+
 export {
   newGroupChat,
   getMyChats,
@@ -280,4 +384,5 @@ export {
   addMember,
   removeMember,
   leaveGroup,
+  sendAttachment,
 }
