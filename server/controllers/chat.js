@@ -509,35 +509,39 @@ const deleteChat = async (req, res) => {
 
 const getMessage = async (req, res) => {
   try {
-    const { chatId } = req.body
-    const { page = 1 } = req.query
-    const resultPage = 20
-    const skip = (page - 1) * resultPage
-    const chat = await chatModel.findById(chatId)
-    if (!chat) {
+    const chatId = req.params.id;
+    const { page = 1 } = req.query;
+  
+    const resultPerPage = 20;
+    const skip = (page - 1) * resultPerPage;
+  
+    const chat = await chatModel.findById(chatId);
+          if (!chat) {
       return res.status(400).json({
         message: 'chat is not found',
         status: false,
       })
     }
-    if (!chat?.members.includes(req.user.toString())) {
-      return res.status(403).json({
-        message: 'you not allow to access the chat ',
-        status: false,
-      })
-    }
+
+    if (!chat.members.some(member => member.toString() === req.user.toString())) {
+        return res.status(403).json({
+          message: 'You are not allowed to access this chat',
+          status: false,
+        });
+      }
+      
     const [message, totalMessageCount] = await Promise.all([
       messageModel
         .find({ chat: chatId })
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(resultPage)
+        .limit(resultPerPage)
         .populate('sender', 'name')
         .lean(),
       messageModel.countDocuments({ chat: chatId }),
     ])
 
-    const totalPAge = Math.ceil(totalMessageCount / resultPage) || 0
+    const totalPage = Math.ceil(totalMessageCount / resultPerPage) || 0
     return res.status(200).json({
       status: true,
       messages: message.reverse(),
