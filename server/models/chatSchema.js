@@ -10,11 +10,7 @@ const chatSchcema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    creator: {
-      type: Types.ObjectId,
-      ref: 'users',
-      required: true,
-    },
+    creator: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
     members: [
       {
         type: Types.ObjectId,

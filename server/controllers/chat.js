@@ -7,7 +7,7 @@ import {
 import chatModel from '../models/chatSchema.js'
 import userModel from '../models/userSchema.js'
 import { emitEvent } from '../utills/index.js'
-import { getOtherMember } from '../utills/feature.js'
+import { deleteFileFromCloudinary, getOtherMember } from '../utills/feature.js'
 import { cloudinaryUploader } from '../config/CloudinaryConfig.js'
 import messageModel from '../models/messageSchema.js'
 import fs from 'fs'
@@ -392,7 +392,7 @@ const getChatDetails = async (req, res) => {
         avatar: avatar?.url,
         name,
       }))
-      return res.status(400).json({
+      return res.status(200).json({
         status: true,
         chat,
       })
@@ -456,7 +456,101 @@ const renameGroup = async (req, res) => {
     })
   }
 }
+const deleteChat = async (req, res) => {
+  try {
+    const chatId = req.params.id
+    const chat = await chatModel.findById(chatId)
+    if (!chat) {
+      return res.status(400).json({
+        message: 'this chat is not found',
+        status: false,
+      })
+    }
+    const members = chat.members
+    if (chat?.groupChat && chat?.creator.toString() !== req.user.toString()) {
+      return res.status(403).json({
+        message: 'you are not allow to delete the group',
+        status: false,
+      })
+    }
+    if (!chat?.groupChat && chat?.members?.includes(req.user.toString())) {
+      return res.status(403).json({
+        message: 'you are not allow to delete the chat',
+        status: false,
+      })
+    }
+    const sendWithAttachment = await messageModel.find({
+      chat: chatId,
+      attachments: { $exists: true, $ne: [] },
+    })
+    const public_ids = []
+    sendWithAttachment?.forEach(({ attachments }) =>
+      attachments.forEach(({ publicId }) => public_ids.push(publicId))
+    )
 
+    await Promise.all([
+      deleteFileFromCloudinary(public_ids),
+      chat.deleteOne(),
+      messageModel.deleteMany({ chat: chatId }),
+    ])
+
+    res.status(200).json({
+      message: 'Chat delete is successfully',
+      status: true,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+      stack: error.stack,
+      status: false,
+    })
+  }
+}
+
+const getMessage = async (req, res) => {
+  try {
+    const { chatId } = req.body
+    const { page = 1 } = req.query
+    const resultPage = 20
+    const skip = (page - 1) * resultPage
+    const chat = await chatModel.findById(chatId)
+    if (!chat) {
+      return res.status(400).json({
+        message: 'chat is not found',
+        status: false,
+      })
+    }
+    if (!chat?.members.includes(req.user.toString())) {
+      return res.status(403).json({
+        message: 'you not allow to access the chat ',
+        status: false,
+      })
+    }
+    const [message, totalMessageCount] = await Promise.all([
+      messageModel
+        .find({ chat: chatId })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(resultPage)
+        .populate('sender', 'name')
+        .lean(),
+      messageModel.countDocuments({ chat: chatId }),
+    ])
+
+    const totalPAge = Math.ceil(totalMessageCount / resultPage) || 0
+    return res.status(200).json({
+      status: true,
+      messages: message.reverse(),
+      totalPage,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+      stack: error.stack,
+      status: false,
+    })
+  }
+}
 export {
   newGroupChat,
   getMyChats,
@@ -467,4 +561,6 @@ export {
   sendAttachment,
   getChatDetails,
   renameGroup,
+  deleteChat,
+  getMessage,
 }
