@@ -14,18 +14,7 @@ import fs from 'fs'
 const newGroupChat = async (req, res) => {
   try {
     const { name, members } = req.body
-    if (!name || !members) {
-      return res.status(400).json({
-        message: 'all fleid is required',
-        status: false,
-      })
-    }
-    if (members.length < 2) {
-      return res.status(400).json({
-        message: 'at least 2 group member',
-        status: false,
-      })
-    }
+
     const allMembers = [...members, req.user]
     const data = await chatModel.create({
       name,

@@ -10,13 +10,6 @@ const signupController = async (req, res) => {
     const { name, userName, password, bio } = req.body
     const filePath = req.file?.path
 
-    // Validate required fields
-    if (!name || !userName || !password || !bio || !filePath) {
-      return res.status(400).json({
-        message: 'All fields are required',
-        status: 'error',
-      })
-    }
 
     // Upload the file to Cloudinary
     const uploadResult = await cloudinaryUploader.upload(filePath)
@@ -119,18 +112,10 @@ const logoutHandler = (req, res) => {
     message: 'logout successfully',
   })
 }
-const searchHandler = (req, res) => {
-  const { name } = req.query
-  res.json({
-    message: name,
-    status: true,
-  })
-}
 
 export {
   loginController,
   signupController,
-  getMyProfileHandlder,
   logoutHandler,
-  searchHandler,
+ 
 }
