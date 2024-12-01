@@ -2,7 +2,7 @@ import express from 'express'
 import {
     getMyProfile,
   searchHandler,
-
+  snedFriendRequest
 } from '../controllers/user.js'
 import {
     loginController,
@@ -12,7 +12,7 @@ import {
 } from '../controllers/authController.js'
 import upload from '../middleware/multer.js'
 import isAuthenticated from '../middleware/auth.js'
-import{registerValidator,validateHandler,loginValidator}from"../utills/validators.js"
+import{registerValidator,validateHandler,loginValidator,sendRequestValidator}from"../utills/validators.js"
 const app = express.Router()
 
 
@@ -27,5 +27,6 @@ app.use(isAuthenticated)
 app.get('/me', getMyProfile)
 app.get('/logout', logoutHandler)
 app.get("/search", searchHandler)
+app.put("/sendfriend",sendRequestValidator(),validateHandler,snedFriendRequest)
 
 export default app
