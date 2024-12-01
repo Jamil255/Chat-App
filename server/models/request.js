@@ -10,7 +10,7 @@ const requestSchema = new mongoose.Schema(
     },
     sender: {
       type: Types.ObjectId,
-      ref: 'user',
+      ref: 'users',
       required: true,
     },
     receiver: {

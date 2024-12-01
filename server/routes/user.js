@@ -2,7 +2,10 @@ import express from 'express'
 import {
     getMyProfile,
   searchHandler,
-  snedFriendRequest
+  snedFriendRequest,
+  acceptFriendRequest,
+  getMyNotification,
+  getMyFriends
 } from '../controllers/user.js'
 import {
     loginController,
@@ -12,7 +15,7 @@ import {
 } from '../controllers/authController.js'
 import upload from '../middleware/multer.js'
 import isAuthenticated from '../middleware/auth.js'
-import{registerValidator,validateHandler,loginValidator,sendRequestValidator}from"../utills/validators.js"
+import{registerValidator,validateHandler,loginValidator,sendRequestValidator,acceptRequestValidator}from"../utills/validators.js"
 const app = express.Router()
 
 
@@ -27,6 +30,9 @@ app.use(isAuthenticated)
 app.get('/me', getMyProfile)
 app.get('/logout', logoutHandler)
 app.get("/search", searchHandler)
-app.put("/sendfriend",sendRequestValidator(),validateHandler,snedFriendRequest)
+app.put("/sendrequest",sendRequestValidator(),validateHandler,snedFriendRequest)
+app.put("/acceptrequest",acceptRequestValidator(),validateHandler,acceptFriendRequest)
+app.get("/notification",getMyNotification)
+app.get("/friends",getMyFriends)
 
 export default app

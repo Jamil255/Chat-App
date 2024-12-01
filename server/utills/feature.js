@@ -1,10 +1,10 @@
 import { cloudinaryUploader } from '../config/CloudinaryConfig.js'
 import { v2 as cloudinary } from 'cloudinary'
 
-export const getOtherMember = (members, userId) => {
-  //   console.log(members)
-  return members?.find((member) => member._id.toString() !== userId.toString())
-}
+export const getOtherMember = (members = [], userId) => {
+    return members?.find((member) => member._id.toString() !== userId.toString());
+  }
+  
 
 export const deleteFileFromCloudinary = async (public_ids) => {
     try {
