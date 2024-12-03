@@ -4,6 +4,7 @@ import userRoutes from './routes/user.js'
 import { cloudinaryConfig } from './config/CloudinaryConfig.js'
 import cookieParser from 'cookie-parser'
 import chatRoutes from './routes/chat.js'
+import adminRoutes from './routes/admin.js'
 const app = express()
 const PORT = process.env.PORT
 app.use(express.json())
@@ -13,6 +14,7 @@ connectDb()
 
 app.use('/api', userRoutes)
 app.use('/chat', chatRoutes)
+app.use("/admin",adminRoutes)
 
 cloudinaryConfig()
 app.listen(PORT, () => {

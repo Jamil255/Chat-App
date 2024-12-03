@@ -33,6 +33,6 @@ app.get("/search", searchHandler)
 app.put("/sendrequest",sendRequestValidator(),validateHandler,snedFriendRequest)
 app.put("/acceptrequest",acceptRequestValidator(),validateHandler,acceptFriendRequest)
 app.get("/notification",getMyNotification)
-app.get("/friends",getMyFriends)
+app.get("/friend",getMyFriends)
 
 export default app
