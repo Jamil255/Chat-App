@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 const initialState = {
-  user: null,
+  data:true,
   isAdmin: false,
   isLoading: true,
 }
@@ -8,12 +8,12 @@ const signupSlice = createSlice({
   name: 'signup',
   initialState,
   reducers: {
-    userExists: (state, action) => {
-      state.user = action.payload
+      userExists: (state, action) => {
+      state.data = action.payload
       state.isLoading = false
     },
     userNotExists: (state, action) => {
-      ;(state.user = null), (state.isLoading = false)
+      (state.data = null), (state.isLoading = false)
     },
   },
 })

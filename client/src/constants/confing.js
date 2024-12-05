@@ -1,2 +1,1 @@
-export const server = import.meta.env.VITE_SERVER
-console.log(server)
+export const server ="http://localhost:3030/api/v1"

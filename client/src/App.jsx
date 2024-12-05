@@ -1,10 +1,12 @@
 import React, { lazy, Suspense, useEffect } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
 import ProtectedRoute from './routes'
 import axios from 'axios'
+import { Toaster } from 'react-hot-toast'
 import { useDispatch, useSelector } from 'react-redux'
 import AppLayoutLoader from './components/Loaders'
-import { userNotExists } from './redux/slice/auth/signupSlice'
+import { userExists, userNotExists } from './redux/slice/auth/signupSlice'
+import { server } from './constants/confing'
 const Home = lazy(() => import('./pages/home/index'))
 const Login = lazy(() => import('./pages/login'))
 const Chat = lazy(() => import('./pages/chats/index'))
@@ -16,27 +18,37 @@ const AdminLayout = lazy(() => import('./components/layout/AdminLayout'))
 const UserManangement = lazy(() => import('./pages/admin/UserManangement'))
 const ChatManangement = lazy(() => import('./pages/admin/ChatManagement'))
 const MessageManagement = lazy(() => import('./pages/admin/MessageManagement'))
+const data = false
 const App = () => {
-    const dispatch = useDispatch()
-    const { user,isLoading } = useSelector(state => state.signup)
-    console.log(user)
+  const dispatch = useDispatch()
+  const { data, isLoading } = useSelector((state) => state.signup)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-      const data=  await axios.get('http://localhost:3030/api/v1/user/me')
+        const { data } = await axios.get(`${server}/user/me`, {
+          withCredentials: true,
+        })
+        dispatch(userExists(data?.data))
       } catch (error) {
-          console.log(error?.respone?.data?.message);
+        console.log(
+          'Error fetching user data:',
+          error?.response?.data || error.message
+        )
         dispatch(userNotExists())
       }
     }
+
     fetchData()
-  }, [])
-  return isLoading ?<AppLayoutLoader/>:(
+  }, [dispatch])
+
+  return isLoading ? (
+    <AppLayoutLoader />
+  ) : (
     <BrowserRouter>
       <Suspense fallback={<AppLayoutLoader />}>
         <Routes>
-          <Route element={<ProtectedRoute user={user} />}>
+          <Route element={<ProtectedRoute user={data} />}>
             <Route path="/" element={<Home />} />
             <Route path="/chat/:chatId" element={<Chat />} />
             <Route path="/group" element={<Group />} />
@@ -44,7 +56,7 @@ const App = () => {
           <Route
             path="/login"
             element={
-              <ProtectedRoute user={!user} redirect="/">
+              <ProtectedRoute user={!data} redirect="/">
                 <Login />
               </ProtectedRoute>
             }
@@ -57,6 +69,7 @@ const App = () => {
           <Route path="/admin/messages" element={<MessageManagement />} />
         </Routes>
       </Suspense>
+      <Toaster position="top-right" />
     </BrowserRouter>
   )
 }
