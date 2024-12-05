@@ -29,9 +29,11 @@ const signupController = async (req, res) => {
       { _id: data?._id, userName: data?.userName },
       process.env.SECRET_KEY
     )
+    const { password: _, ...userWithoutPassword } = data.toObject()
+
     res.cookie('token', token, cookieOptions).status(201).json({
       message: 'User created successfully',
-      data: data,
+      data: userWithoutPassword,
       status: true,
     })
   } catch (error) {
@@ -70,17 +72,16 @@ const loginController = async (req, res) => {
       { _id: user?._id, userName: user?.userName },
       process.env.SECRET_KEY
     )
-    res
-      .cookie('token', token, cookieOptions)
-      .status(201)
-      .json({
-        message: 'user successfully login',
-        data: { ...user, password: '' },
-        status: true,
-      })
+    const { password: _, ...userWithoutPassword } = user.toObject()
+    res.cookie('token', token, cookieOptions).status(201).json({
+      message: 'user successfully login',
+      data: userWithoutPassword,
+      status: true,
+    })
   } catch (error) {
     res.status(500).json({
       message: error.message,
+      stack: error.stack,
       status: false,
       data: [],
     })
