@@ -4,27 +4,19 @@ import fs from 'fs'
 import jwt from 'jsonwebtoken'
 import { cookieOptions } from '../utills/index.js'
 import bcrypt from 'bcrypt'
+import { uploadFilesToCloudinary } from '../utills/feature.js'
 
 const signupController = async (req, res) => {
   try {
     const { name, userName, password, bio } = req.body
-    const filePath = req.file?.path
-
-
+    const file = req.file
     // Upload the file to Cloudinary
-    const uploadResult = await cloudinaryUploader.upload(filePath)
+    const result = await uploadFilesToCloudinary([file])
 
-    // Delete the local file
-    fs.unlink(filePath, function (error) {
-      if (error) console.error('Error deleting file:', error.message)
-    })
-
-    // Prepare user avatar data
     const avatar = {
-      publicId: uploadResult.public_id,
-      url: uploadResult.url,
+      publicId: result[0].public_id,
+      url: result[0].url,
     }
-
     // Create the user in the database
     const data = await userModel.create({
       name,
@@ -33,7 +25,7 @@ const signupController = async (req, res) => {
       avatar,
       bio,
     })
-    const token = await jwt.sign(
+    const token = jwt.sign(
       { _id: data?._id, userName: data?.userName },
       process.env.SECRET_KEY
     )
@@ -78,11 +70,14 @@ const loginController = async (req, res) => {
       { _id: user?._id, userName: user?.userName },
       process.env.SECRET_KEY
     )
-    res.cookie('token', token, cookieOptions).status(201).json({
-      message: 'user successfully login',
-      data: user,
-      status: true,
-    })
+    res
+      .cookie('token', token, cookieOptions)
+      .status(201)
+      .json({
+        message: 'user successfully login',
+        data: { ...user, password: '' },
+        status: true,
+      })
   } catch (error) {
     res.status(500).json({
       message: error.message,
@@ -113,9 +108,4 @@ const logoutHandler = (req, res) => {
   })
 }
 
-export {
-  loginController,
-  signupController,
-  logoutHandler,
- 
-}
+export { loginController, signupController, logoutHandler }

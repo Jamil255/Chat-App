@@ -9,24 +9,40 @@ import {
   leaveGroup,
   sendAttachment,
   getChatDetails,
-    renameGroup,
-    deleteChat,
-    getMessage
+  renameGroup,
+  deleteChat,
+  getMessage,
 } from '../controllers/chat.js'
-import upload from '../middleware/multer.js'
-import{newGroupValidator,validateHandler,addMemberValidator,removeMemberValidator,chatIdValidator,sendAttachmentsValidator,renameValidator}from'../utills/validators.js'
+import {
+  newGroupValidator,
+  validateHandler,
+  addMemberValidator,
+  removeMemberValidator,
+  chatIdValidator,
+  sendAttachmentsValidator,
+  renameValidator,
+} from '../utills/validators.js'
 const app = express()
 
 app.use(isAuthenticated)
-app.post('/new',newGroupValidator(),validateHandler, newGroupChat)
+app.post('/new', newGroupValidator(), validateHandler, newGroupChat)
 app.get('/my', getMyChats)
 app.get('/mygroup', getMyGroup)
-app.put('/addmember',addMemberValidator(),validateHandler, addMember)
-app.put('/removemember',removeMemberValidator(),validateHandler, removeMember)
-app.delete('/delete/:id', chatIdValidator(),validateHandler,leaveGroup)
-app.post('/message',sendAttachmentsValidator(), validateHandler,upload.array('files', 5), sendAttachment)
-app.get("/message/:id", chatIdValidator(), validateHandler,getMessage)
+app.put('/addmember', addMemberValidator(), validateHandler, addMember)
+app.put('/removemember', removeMemberValidator(), validateHandler, removeMember)
+app.delete('/delete/:id', chatIdValidator(), validateHandler, leaveGroup)
+app.post(
+  '/message',
+  sendAttachmentsValidator(),
+  validateHandler,
+  sendAttachment
+)
+app.get('/message/:id', chatIdValidator(), validateHandler, getMessage)
 
-app.route('/:id').get( chatIdValidator(), validateHandler,getChatDetails).put(renameValidator(),validateHandler,renameGroup).delete(chatIdValidator(), validateHandler,deleteChat)
+app
+  .route('/:id')
+  .get(chatIdValidator(), validateHandler, getChatDetails)
+  .put(renameValidator(), validateHandler, renameGroup)
+  .delete(chatIdValidator(), validateHandler, deleteChat)
 
 export default app
