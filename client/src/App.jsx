@@ -1,8 +1,10 @@
-import React, { lazy, Suspense } from 'react'
+import React, { lazy, Suspense, useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import ProtectedRoute from './routes'
-import { dividerClasses } from '@mui/material'
+import axios from 'axios'
+import { useDispatch, useSelector } from 'react-redux'
 import AppLayoutLoader from './components/Loaders'
+import { userNotExists } from './redux/slice/auth/signupSlice'
 const Home = lazy(() => import('./pages/home/index'))
 const Login = lazy(() => import('./pages/login'))
 const Chat = lazy(() => import('./pages/chats/index'))
@@ -15,8 +17,22 @@ const UserManangement = lazy(() => import('./pages/admin/UserManangement'))
 const ChatManangement = lazy(() => import('./pages/admin/ChatManagement'))
 const MessageManagement = lazy(() => import('./pages/admin/MessageManagement'))
 const App = () => {
-  let user = true
-  return (
+    const dispatch = useDispatch()
+    const { user,isLoading } = useSelector(state => state.signup)
+    console.log(user)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+      const data=  await axios.get('http://localhost:3030/api/v1/user/me')
+      } catch (error) {
+          console.log(error?.respone?.data?.message);
+        dispatch(userNotExists())
+      }
+    }
+    fetchData()
+  }, [])
+  return isLoading ?<AppLayoutLoader/>:(
     <BrowserRouter>
       <Suspense fallback={<AppLayoutLoader />}>
         <Routes>
