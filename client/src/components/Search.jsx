@@ -7,22 +7,34 @@ import {
   Stack,
   TextField,
 } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Search as SearchIcon } from '@mui/icons-material'
 import { useInputValidation } from '6pp'
 import UserItem from './shared/userItem'
 import { sampleUsers } from '../constants/sampleData'
 import CloseIcon from '@mui/icons-material/Close'
+import { useSelector } from 'react-redux'
+import { useLazySearchUserQuery } from '../redux/api/api'
 const Search = ({ onClose }) => {
-  const [user, setUser] = useState(sampleUsers)
-  const search = useInputValidation()
-  const addFriendHandler = (id) => {
-    console.log(id)
-  }
+  const [user, setUser] = useState([])
+  const search = useInputValidation('')
+  const { isSearch } = useSelector((state) => state.misc)
+  const [searchUser] = useLazySearchUserQuery()
+  const addFriendHandler = (id) => {}
   const isLoadingSendFriendRequest = false
 
+  useEffect(() => {
+    const timeOutId = setTimeout(() => {
+      searchUser(search.value)
+        .then(({ data }) => setUser(data?.allUsers))
+        .catch((e) => console.log(e))
+    }, 1000)
+    return () => {
+      clearTimeout(timeOutId)
+    }
+  }, [search.value])
   return (
-    <Dialog open onClose={onClose}>
+    <Dialog open={isSearch} onClose={onClose}>
       <Stack p={'2rem'} direction={'column'} width={'25rem'}>
         <DialogTitle textAlign={'center'}>
           {' '}

@@ -21,27 +21,23 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 import { server } from '../../constants/confing.js'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { userNotExists } from '../../redux/slice/auth/signupSlice.js'
+import { setIsMobile, setIsSearch } from '../../redux/slice/misc/misc.js'
 
 const SearchDialog = lazy(() => import('../Search'))
 const NotificationDialog = lazy(() => import('../Notification'))
 const NewGroupDialog = lazy(() => import('../NewGroup'))
 
 const Header = () => {
-  const [isMobile, setIsMobile] = useState(false)
-  const [isSearch, setIsSearch] = useState(false)
   const [isNotification, setIsNotification] = useState(false)
   const [isNewGroup, setIsNewGroup] = useState(false)
-    const navigate = useNavigate()
-    const dispatch = useDispatch()
-  const handleMobile = () => {
-    setIsMobile(!isMobile)
-  }
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const handleMobile = () => dispatch(setIsMobile(true))
+  const { isSearch } = useSelector((state) => state.misc)
 
-  const openSearch = () => {
-    setIsSearch((prev) => !prev)
-  }
+  const openSearch = () => dispatch(setIsSearch(true))
 
   const openNewGroup = () => {
     setIsNewGroup((prev) => !prev)
@@ -65,9 +61,7 @@ const Header = () => {
     setIsNotification(false) // Close notification dialog
   }
 
-  const closeSearch = () => {
-    setIsSearch(false) // Close notification dialog
-  }
+  const closeSearch = () => dispatch(setIsSearch(false))
   const closeNewGroup = () => {
     setIsNewGroup(false) // Close notification dialog
   }
