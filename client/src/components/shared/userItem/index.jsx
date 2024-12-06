@@ -1,6 +1,7 @@
-import { Avatar, ListItem, Stack, Typography, IconButton } from '@mui/material'
-import React, { memo } from 'react'
 import { Add as AddIcon, Remove } from '@mui/icons-material'
+import { Avatar, IconButton, ListItem, Stack, Typography } from '@mui/material'
+import React, { memo } from 'react'
+import { transformImage } from '../../../lib/feature'
 
 const UserItem = ({
   user,
@@ -19,7 +20,7 @@ const UserItem = ({
         width={'100%'}
         {...styling}
       >
-        <Avatar src={avatar} />
+        <Avatar src={transformImage(avatar)} />
         <Typography
           variant="body1"
           sx={{
@@ -44,7 +45,6 @@ const UserItem = ({
             },
           }}
           onClick={() => handler(_id)}
-          disabled={handlerIsLoading}
         >
           {isAdded ? <Remove /> : <AddIcon />}
         </IconButton>

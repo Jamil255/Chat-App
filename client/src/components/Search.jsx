@@ -11,17 +11,24 @@ import React, { useEffect, useState } from 'react'
 import { Search as SearchIcon } from '@mui/icons-material'
 import { useInputValidation } from '6pp'
 import UserItem from './shared/userItem'
-import { sampleUsers } from '../constants/sampleData'
 import CloseIcon from '@mui/icons-material/Close'
 import { useSelector } from 'react-redux'
-import { useLazySearchUserQuery } from '../redux/api/api'
+import {
+  useLazySearchUserQuery,
+  useSendFriendRequestMutation,
+} from '../redux/api/api'
+import { useAsyncMutation } from '../hook'
 const Search = ({ onClose }) => {
   const [user, setUser] = useState([])
   const search = useInputValidation('')
   const { isSearch } = useSelector((state) => state.misc)
   const [searchUser] = useLazySearchUserQuery()
-  const addFriendHandler = (id) => {}
-  const isLoadingSendFriendRequest = false
+  const [sendFriendRequest, isLoadingSendFriendRequest] = useAsyncMutation(
+    useSendFriendRequestMutation
+  )
+  const addFriendHandler = async (id) => {
+    await sendFriendRequest('Sending friend request..', { userId: id })
+  }
 
   useEffect(() => {
     const timeOutId = setTimeout(() => {
@@ -37,7 +44,6 @@ const Search = ({ onClose }) => {
     <Dialog open={isSearch} onClose={onClose}>
       <Stack p={'2rem'} direction={'column'} width={'25rem'}>
         <DialogTitle textAlign={'center'}>
-          {' '}
           Find People
           <IconButton
             aria-label="close"

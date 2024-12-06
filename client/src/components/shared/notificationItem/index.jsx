@@ -2,6 +2,7 @@ import { Avatar, Button, ListItem, Stack, Typography } from '@mui/material'
 import React, { memo, useMemo } from 'react'
 
 const NotificationItem = ({ sender, _id, handler }) => {
+    console.log(_id)
   const { name, avatar } = sender?.sender
   return (
     <ListItem>
@@ -32,7 +33,7 @@ const NotificationItem = ({ sender, _id, handler }) => {
             sm: 'row',
           }}
         >
-          <Button onClick={() => handler({ _id, accept: true })}>Accept</Button>
+          <Button onClick={() => handler({ _id, accept:true })}>Accept</Button>
           <Button color="error" onClick={() => handler({ _id, accept: false })}>
             Reject
           </Button>

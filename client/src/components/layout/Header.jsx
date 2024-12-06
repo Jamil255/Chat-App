@@ -23,19 +23,22 @@ import toast from 'react-hot-toast'
 import { server } from '../../constants/confing.js'
 import { useDispatch, useSelector } from 'react-redux'
 import { userNotExists } from '../../redux/slice/auth/signupSlice.js'
-import { setIsMobile, setIsSearch } from '../../redux/slice/misc/misc.js'
+import {
+  setIsMobile,
+  setIsNotification,
+  setIsSearch,
+} from '../../redux/slice/misc/misc.js'
 
 const SearchDialog = lazy(() => import('../Search'))
 const NotificationDialog = lazy(() => import('../Notification'))
 const NewGroupDialog = lazy(() => import('../NewGroup'))
 
 const Header = () => {
-  const [isNotification, setIsNotification] = useState(false)
   const [isNewGroup, setIsNewGroup] = useState(false)
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const handleMobile = () => dispatch(setIsMobile(true))
-  const { isSearch } = useSelector((state) => state.misc)
+  const { isSearch, isNotification } = useSelector((state) => state.misc)
 
   const openSearch = () => dispatch(setIsSearch(true))
 
@@ -53,13 +56,9 @@ const Header = () => {
     dispatch(userNotExists())
   }
 
-  const openNotification = () => {
-    setIsNotification((prev) => !prev)
-  }
+  const openNotification = () => dispatch(setIsNotification(true))
 
-  const closeNotification = () => {
-    setIsNotification(false) // Close notification dialog
-  }
+  const closeNotification = () => dispatch(setIsNotification(false))
 
   const closeSearch = () => dispatch(setIsSearch(false))
   const closeNewGroup = () => {

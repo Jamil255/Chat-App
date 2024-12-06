@@ -31,7 +31,16 @@ const AppLayout = () => (WrappedComponent) => {
         {isLoading ? (
           <Skeleton />
         ) : (
-          <Drawer open={isMobile} onClose={handleMobileClose}>
+          <Drawer
+            open={isMobile}
+            onClose={handleMobileClose}
+            sx={{
+              display: {
+                xs: 'block',
+                sm: 'none',
+              },
+            }}
+          >
             <ChatList
               width={'60vh'}
               chats={data?.chats}
