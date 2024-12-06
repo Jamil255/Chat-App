@@ -38,7 +38,7 @@ const Login = () => {
       },
     }
     try {
-      const {} = await axios.post(
+      const { data } = await axios.post(
         `${server}/user/login`,
         {
           userName: userName.value,
@@ -49,7 +49,7 @@ const Login = () => {
       dispatch(userExists(data?.data))
       toast.success(data?.message)
     } catch (error) {
-      toast.error(error?.response?.data?.message || 'Something went worng')
+      toast.error(error?.response?.data?.message)
     }
   }
   const handleSignup = async (e) => {

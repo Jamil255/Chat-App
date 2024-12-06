@@ -6,10 +6,13 @@ import ChatList from '../ChatList'
 import { samepleChats } from '../../constants/sampleData'
 import { useParams } from 'react-router-dom'
 import Profile from '../Profile'
+import { useMyChatsQuery } from '../../redux/api/api'
 // it is HOC high order components take a component as a argument and return a new component
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
     const { chatId } = useParams()
+    const { isLoading, error, isError, isFetching, data } = useMyChatsQuery()
+    console.log(data)
     const handleChatDelete = (e, _id, groupChat) => {
       e.prevenetDefualt()
       console.log(_id, groupChat)

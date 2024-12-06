@@ -18,6 +18,11 @@ import {
 } from '@mui/icons-material'
 import IconBtn from '../IconBtn'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
+import toast from 'react-hot-toast'
+import { server } from '../../constants/confing.js'
+import { useDispatch } from 'react-redux'
+import { userNotExists } from '../../redux/slice/auth/signupSlice.js'
 
 const SearchDialog = lazy(() => import('../Search'))
 const NotificationDialog = lazy(() => import('../Notification'))
@@ -28,7 +33,8 @@ const Header = () => {
   const [isSearch, setIsSearch] = useState(false)
   const [isNotification, setIsNotification] = useState(false)
   const [isNewGroup, setIsNewGroup] = useState(false)
-const navigate=useNavigate()
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
   const handleMobile = () => {
     setIsMobile(!isMobile)
   }
@@ -41,10 +47,14 @@ const navigate=useNavigate()
     setIsNewGroup((prev) => !prev)
   }
 
-  const navigateToGroup = () =>navigate("/group") 
+  const navigateToGroup = () => navigate('/group')
 
-  const logoutHandler = () => {
-    console.log('logoutHandler')
+  const logoutHandler = async () => {
+    const { data } = await axios.get(`${server}/user/logout`, {
+      withCredentials: true,
+    })
+    toast.error(data?.message)
+    dispatch(userNotExists())
   }
 
   const openNotification = () => {
