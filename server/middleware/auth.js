@@ -1,19 +1,21 @@
 import jwt from 'jsonwebtoken'
+
 const isAuthenticated = async (req, res, next) => {
   try {
-    const token = req.cookies.token
+    const token = req.cookies['token']
     if (!token) {
       return res.status(401).json({
-        message: 'unAuthorized acess please login first ',
+        message: 'Unauthorized access. Please log in first.',
         status: false,
       })
     }
-    const decodeData = jwt.verify(token, process.env.SECRET_KEY)
-    req.user = decodeData._id
 
-    next()
+    const decodedData = jwt.verify(token, process.env.SECRET_KEY)
+    req.user = decodedData._id
+
+    next() // Proceed to the next middleware
   } catch (error) {
-    res.json({
+    res.status(401).json({
       message: error.message,
       status: false,
     })
