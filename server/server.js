@@ -13,6 +13,7 @@ import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from './constants/event.js'
 import { v4 as uuid } from 'uuid'
 import { getSocket } from './utills/index.js'
 import messageModel from './models/messageSchema.js'
+import { socketAuthenticator } from './middleware/auth.js'
 const userSocketId = new Map()
 const app = express()
 const PORT = process.env.PORT
@@ -20,13 +21,21 @@ const server = createServer(app)
 const io = new Server(server, {
   cors: corsOption,
 })
+// io.use((socket, next) => {
+//     cookieParser()(
+//       socket.request,
+//       socket.request.res,
+//       async (err) => await socketAuthenticator(err, socket, next)
+//     );
+//   });
+
+
+
+
 
 io.on('connection', (socket) => {
   console.log('user connected', socket.id)
-  const user = {
-    _id: 'adaddadd',
-    name: 'john deo',
-  }
+  const user = socket.user
   userSocketId.set(user._id.toString(), socket.id)
   socket.on(NEW_MESSAGE, async ({ chatId, message, members }) => {
     const messageForRealTime = {

@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import AppLayoutLoader from './components/Loaders'
 import { userExists, userNotExists } from './redux/slice/auth/signupSlice'
 import { server } from './constants/confing'
+import { SocketProvider } from './socket'
 const Home = lazy(() => import('./pages/home/index'))
 const Login = lazy(() => import('./pages/login'))
 const Chat = lazy(() => import('./pages/chats/index'))
@@ -48,7 +49,13 @@ const App = () => {
     <BrowserRouter>
       <Suspense fallback={<AppLayoutLoader />}>
         <Routes>
-          <Route element={<ProtectedRoute user={data} />}>
+          <Route
+            element={
+              <SocketProvider>
+                <ProtectedRoute user={data} />
+              </SocketProvider>
+            }
+          >
             <Route path="/" element={<Home />} />
             <Route path="/chat/:chatId" element={<Chat />} />
             <Route path="/group" element={<Group />} />

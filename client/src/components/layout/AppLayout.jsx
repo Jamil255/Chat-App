@@ -10,13 +10,14 @@ import { useMyChatsQuery } from '../../redux/api/api'
 import { useDispatch, useSelector } from 'react-redux'
 import { setIsMobile } from '../../redux/slice/misc/misc'
 import { useErrors } from '../../hook'
+import { getSocket } from '../../socket'
 // it is HOC high order components take a component as a argument and return a new component
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
     const { chatId } = useParams()
     const { isMobile } = useSelector((state) => state.misc)
     const dispatch = useDispatch()
-
+    const socket = getSocket()
     const { isLoading, error, isError, isFetching, data } = useMyChatsQuery()
     const handleMobileClose = () => dispatch(setIsMobile(false))
     useErrors([{ isError, error }])

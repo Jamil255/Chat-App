@@ -13,7 +13,7 @@ import {
   logoutHandler,
 } from '../controllers/authController.js'
 import { singleAvatar } from '../middleware/multer.js'
-import isAuthenticated from '../middleware/auth.js'
+import {isAuthenticated} from '../middleware/auth.js'
 import {
   registerValidator,
   validateHandler,
