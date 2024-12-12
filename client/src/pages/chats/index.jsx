@@ -12,22 +12,51 @@ import MessageComponent from '../../components/shared/messageComponent'
 import { getSocket } from '../../socket'
 import toast from 'react-hot-toast'
 import { NEW_MESSAGE } from '../../constants/event.js'
-import { useChatDetailsQuery } from '../../redux/api/api.js'
-import { useSocketEvents } from '../../hook/index.jsx'
+import { useInfiniteScrollTop } from '6pp'
+import {
+  useChatDetailsQuery,
+  useGetMyMessageQuery,
+} from '../../redux/api/api.js'
+import { useErrors, useSocketEvents } from '../../hook/index.jsx'
+import { useDispatch, useSelector } from 'react-redux'
+import FileMenu from '../../components/shared/fileMenu/index.jsx'
+import { setFileMenu } from '../../redux/slice/misc/misc.js'
 
-const user = {
-  _id: 'jjdhhdnnnnjdnf',
-  name: 'jamil afzal mughal',
-}
-const Chats = ({ chatId, members }) => {
+const Chats = ({ chatId }) => {
   const containerRef = useRef(null)
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState([])
+  const [page, setPage] = useState(1)
+  const [fileMenuAnchor, setFileMenuAnchor] = useState(null)
+  const dispatch = useDispatch()
   const socket = getSocket()
+  const user = useSelector((state) => state.signup)
   const { data, isLoading, isError, error, reFetch } = useChatDetailsQuery({
     chatId,
     skip: !chatId,
   })
+  const oldChunkMessage = useGetMyMessageQuery({
+    chatId,
+    page,
+  })
+
+  const { data: oldMessage, setData: setOldMessage } = useInfiniteScrollTop(
+    containerRef,
+    oldChunkMessage?.data?.totalPage,
+    page,
+    setPage,
+    oldChunkMessage?.data?.messages
+  )
+  const allMessages = [...oldMessage, ...messages]
+  useErrors([
+    { isError, error },
+    { isError: oldChunkMessage.isError, error: oldChunkMessage.errors },
+  ])
+
+  const handleFileOpen = (e) => {
+    dispatch(setFileMenu(true))
+    setFileMenuAnchor(e.currentTarget)
+  }
   const submitHandler = (e) => {
     e.preventDefault()
     if (!message.trim()) return toast.error('input field required')
@@ -58,7 +87,7 @@ const Chats = ({ chatId, members }) => {
           backgroundColor: grayColor,
         }}
       >
-        {sampleMessage?.map((i) => (
+        {allMessages?.map((i) => (
           <MessageComponent message={i} user={user} key={i._id} />
         ))}
       </Stack>
@@ -81,6 +110,7 @@ const Chats = ({ chatId, members }) => {
               left: '0.8rem',
               rotate: '-30deg',
             }}
+            onClick={handleFileOpen}
           >
             <AttachFileIcon />
           </IconButton>
@@ -105,6 +135,7 @@ const Chats = ({ chatId, members }) => {
           </IconButton>
         </Stack>
       </form>
+      <FileMenu anchorE1={fileMenuAnchor} chatId={chatId} />
     </>
   )
 }

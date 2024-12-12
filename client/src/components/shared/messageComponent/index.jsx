@@ -9,7 +9,7 @@ const MessageComponent = ({ message, user }) => {
   const { sender, content, attachments = [], createdAt } = message
   // console.log(attachments);
 
-  const sameSender = sender?._id == user?._id
+  const sameSender = sender?._id == user?.data?._id
   const timeAgo = moment(createdAt).fromNow()
 
   return (

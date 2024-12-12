@@ -53,6 +53,6 @@ const useSocketEvents = (socket, handlers) => {
         socket.off(events, handler)
       })
     }
-  }, [])
+  }, [socket, handlers])
 }
-export { useErrors, useAsyncMutation,useSocketEvents }
+export { useErrors, useAsyncMutation, useSocketEvents }

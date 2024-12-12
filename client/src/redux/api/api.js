@@ -4,7 +4,7 @@ import { server } from '../../constants/confing'
 const api = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({ baseUrl: `${server}` }),
-  tagTypes: ['Chat', 'User'],
+  tagTypes: ['Chat', 'User', 'Message'],
   endpoints: (builder) => ({
     myChats: builder.query({
       query: () => ({
@@ -47,7 +47,7 @@ const api = createApi({
     }),
     chatDetails: builder.query({
       query: ({ chatId, populate = false }) => {
-        let url = `chat/${chatId}`
+        let url = `/chat/${chatId}`
         if (populate) url += '?populate=true'
         return {
           url,
@@ -57,6 +57,22 @@ const api = createApi({
 
       providesTags: ['Chat'],
     }),
+    getMyMessage: builder.query({
+      query: ({ chatId, page }) => ({
+        url: `/chat/message/${chatId}?page=${page}`,
+        credentials: 'include',
+      }),
+
+      providesTags: ['Message'],
+    }),
+    sendAttachment: builder.mutation({
+      query: (data) => ({
+        url: '/chat/message',
+        method: 'POST',
+        credentials: 'include',
+        body: data,
+      }),
+    }),
   }),
 })
 export default api
@@ -65,6 +81,8 @@ export const {
   useLazySearchUserQuery,
   useSendFriendRequestMutation,
   useGetNotificationsQuery,
-    useAcceptFriendRequestMutation,
+  useAcceptFriendRequestMutation,
   useChatDetailsQuery,
+  useGetMyMessageQuery,
+  useSendAttachmentMutation,
 } = api
