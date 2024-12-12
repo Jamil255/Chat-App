@@ -21,17 +21,26 @@ const server = createServer(app)
 const io = new Server(server, {
   cors: corsOption,
 })
-// io.use((socket, next) => {
-//     cookieParser()(
-//       socket.request,
-//       socket.request.res,
-//       async (err) => await socketAuthenticator(err, socket, next)
-//     );
-//   });
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(cookieParser())
+connectDb()
+app.use(cors(corsOption))
 
+app.use('/api/v1/user', userRoutes)
+app.use('/api/v1/chat', chatRoutes)
+app.use('/api/v1/admin', adminRoutes)
 
-
+cloudinaryConfig()
+io.use((socket, next) => {
+    cookieParser()(socket.request, socket.request.res, async (err) => {
+      if (err) {
+        return next(new Error('Cookie parsing failed'));
+      }
+      await socketAuthenticator(err, socket, next);
+    });
+  });
 
 io.on('connection', (socket) => {
   console.log('user connected', socket.id)
@@ -75,17 +84,7 @@ io.on('connection', (socket) => {
   })
 })
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.use(cookieParser())
-connectDb()
-app.use(cors(corsOption))
 
-app.use('/api/v1/user', userRoutes)
-app.use('/api/v1/chat', chatRoutes)
-app.use('/api/v1/admin', adminRoutes)
-
-cloudinaryConfig()
 server.listen(PORT, () => {
   console.log(`port is running on ${PORT}`)
 })

@@ -1,5 +1,5 @@
 import express from 'express'
-import {isAuthenticated} from '../middleware/auth.js'
+import { isAuthenticated } from '../middleware/auth.js'
 import {
   newGroupChat,
   getMyChats,
@@ -40,7 +40,7 @@ app.post(
 app.get('/message/:id', chatIdValidator(), validateHandler, getMessage)
 
 app
-  .route('/:id')
+  .route('/:chatId')
   .get(chatIdValidator(), validateHandler, getChatDetails)
   .put(renameValidator(), validateHandler, renameGroup)
   .delete(chatIdValidator(), validateHandler, deleteChat)

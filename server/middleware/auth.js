@@ -24,37 +24,28 @@ const isAuthenticated = async (req, res, next) => {
 }
 
 const socketAuthenticator = async (error, socket, next) => {
-    const socketReq=socket.request.res
-  try {
-    if (error) {
-      return socketReq.status(500).json({
-        error,
-        status: false,
-      })
+    try {
+      if (error) {
+        return next(new Error('Internal Server Error'));
+      }
+  
+      const token = socket.request.cookies?.token; // Use optional chaining to avoid errors
+      if (!token) {
+        return next(new Error('Please login to access this route'));
+      }
+  
+      const decodedData = jwt.verify(token, process.env.SECRET_KEY);
+      const user = await userModel.findById(decodedData._id);
+      if (!user) {
+        return next(new Error('User not found, please login to access this route'));
+      }
+  
+      socket.user = user; // Attach user to socket for later use
+      next(); // Continue to the next middleware
+    } catch (err) {
+      console.error(err);
+      next(new Error('Authentication failed'));
     }
-    const token = socket.request.cookies['token']
-    if (!token) {
-      return  socketReq.status(401).json({
-        message: 'please login to access this route',
-        status: false,
-      })
-    }
-
-    const decodedData = jwt.verify(token, process.env.SECRET_KEY)
-    const user = await userModel.findById(decodedData._id)
-    if (!user) {
-      return socketReq.status(401).json({
-        message: 'please login to access this route',
-        status: false,
-      })
-    }
-    socket.user = user
-    return next()
-  } catch (error) {
-  console.log(error)
-    
-}
-
-}
+  };
 
 export { isAuthenticated, socketAuthenticator }

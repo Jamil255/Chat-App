@@ -59,7 +59,7 @@ const sendAttachmentsValidator = () => [
   body("chatId", "Please Enter Chat ID").notEmpty(),
 ];
 
-const chatIdValidator = () => [param("chatId", "Please Enter Chat ID").notEmpty()];
+const chatIdValidator = () => [param("chatId" , "Please Enter Chat ID").notEmpty()];
 
 const renameValidator = () => [
   param("chatId", "Please Enter Chat ID").notEmpty(),

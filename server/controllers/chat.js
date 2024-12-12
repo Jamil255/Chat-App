@@ -368,7 +368,7 @@ const getChatDetails = async (req, res) => {
   try {
     if (req.query.populate === 'true') {
       const chat = await chatModel
-        .findById(req.params.id)
+        .findById(req.params.chatId)
         .populate('members', 'name avatar')
         .lean()
       if (!chat)
@@ -386,7 +386,7 @@ const getChatDetails = async (req, res) => {
         chat,
       })
     } else {
-      const chat = await chatModel.findById(req.params.id)
+      const chat = await chatModel.findById(req.params.chatId)
       if (!chat) {
         return res.status(400).json({
           message: 'chat is not found',
@@ -498,27 +498,29 @@ const deleteChat = async (req, res) => {
 
 const getMessage = async (req, res) => {
   try {
-    const chatId = req.params.id;
-    const { page = 1 } = req.query;
-  
-    const resultPerPage = 20;
-    const skip = (page - 1) * resultPerPage;
-  
-    const chat = await chatModel.findById(chatId);
-          if (!chat) {
+    const chatId = req.params.id
+    const { page = 1 } = req.query
+
+    const resultPerPage = 20
+    const skip = (page - 1) * resultPerPage
+
+    const chat = await chatModel.findById(chatId)
+    if (!chat) {
       return res.status(400).json({
         message: 'chat is not found',
         status: false,
       })
     }
 
-    if (!chat.members.some(member => member.toString() === req.user.toString())) {
-        return res.status(403).json({
-          message: 'You are not allowed to access this chat',
-          status: false,
-        });
-      }
-      
+    if (
+      !chat.members.some((member) => member.toString() === req.user.toString())
+    ) {
+      return res.status(403).json({
+        message: 'You are not allowed to access this chat',
+        status: false,
+      })
+    }
+
     const [message, totalMessageCount] = await Promise.all([
       messageModel
         .find({ chat: chatId })
