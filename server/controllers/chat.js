@@ -7,7 +7,11 @@ import {
 import chatModel from '../models/chatSchema.js'
 import userModel from '../models/userSchema.js'
 import { emitEvent } from '../utills/index.js'
-import { deleteFileFromCloudinary, getOtherMember } from '../utills/feature.js'
+import {
+  deleteFileFromCloudinary,
+  getOtherMember,
+  uploadFilesToCloudinary,
+} from '../utills/feature.js'
 import { cloudinaryUploader } from '../config/CloudinaryConfig.js'
 import messageModel from '../models/messageSchema.js'
 import fs from 'fs'
@@ -300,35 +304,10 @@ const sendAttachment = async (req, res) => {
         status: false,
       })
     }
-
-    // Upload files
-    const uploadedAttachments = []
-    for (const file of files) {
-      try {
-        const result = await cloudinaryUploader.upload(file?.path)
-        uploadedAttachments.push({
-          publicId: result.public_id,
-          url: result.secure_url,
-        })
-        fs.unlink(file?.path, (error) => {
-          if (error) console.error('Error deleting file:', error.message)
-        })
-      } catch (uploadError) {
-        console.error('Cloudinary Upload Error:', uploadError.message)
-      }
-    }
-
-    // Check if attachments are uploaded
-    if (uploadedAttachments.length === 0) {
-      return res.status(400).json({
-        message: 'No files were uploaded',
-        status: false,
-      })
-    }
-
-    // Construct message
+      const attachments = await uploadFilesToCloudinary(files)
+      console.log(attachments)
     const messageForDB = {
-      attachments: uploadedAttachments,
+      attachments,
       content: '',
       chat: chatId,
       sender: me._id,
@@ -498,7 +477,7 @@ const deleteChat = async (req, res) => {
 
 const getMessage = async (req, res) => {
   try {
-    const chatId = req.params.id
+    const chatId = req.params.chatId
     const { page = 1 } = req.query
 
     const resultPerPage = 20
@@ -546,6 +525,7 @@ const getMessage = async (req, res) => {
     })
   }
 }
+
 export {
   newGroupChat,
   getMyChats,

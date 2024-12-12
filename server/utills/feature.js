@@ -18,7 +18,7 @@ const getBase64 = (file) =>
         getBase64(file),
         {
           resource_type: 'auto',
-          public_id: uuid(),
+          publicId: uuid(),
         },
         (error, result) => {
           if (error) return reject(error)
@@ -32,7 +32,7 @@ const getBase64 = (file) =>
     const results = await Promise.all(uploadPromises)
 
     const formattedResults = results.map((result) => ({
-      public_id: result.public_id,
+      publicId: result.public_id,
       url: result.secure_url,
     }))
     return formattedResults

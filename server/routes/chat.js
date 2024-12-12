@@ -22,6 +22,7 @@ import {
   sendAttachmentsValidator,
   renameValidator,
 } from '../utills/validators.js'
+import { attachmentsMulter } from '../middleware/multer.js'
 const app = express()
 
 app.use(isAuthenticated)
@@ -32,12 +33,11 @@ app.put('/addmember', addMemberValidator(), validateHandler, addMember)
 app.put('/removemember', removeMemberValidator(), validateHandler, removeMember)
 app.delete('/delete/:id', chatIdValidator(), validateHandler, leaveGroup)
 app.post(
-  '/message',
-  sendAttachmentsValidator(),
-  validateHandler,
+    '/message',
+    attachmentsMulter,
   sendAttachment
 )
-app.get('/message/:id', chatIdValidator(), validateHandler, getMessage)
+app.get('/message/:chatId', chatIdValidator(), validateHandler, getMessage)
 
 app
   .route('/:chatId')
