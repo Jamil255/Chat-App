@@ -1,6 +1,6 @@
-import React, { useRef } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import AppLayout from '../../components/layout/AppLayout.jsx'
-import { IconButton, Stack } from '@mui/material'
+import { IconButton, Skeleton, Stack } from '@mui/material'
 import { grayColor, orange } from '../../constants/color.js'
 import {
   AttachFile as AttachFileIcon,
@@ -9,13 +9,42 @@ import {
 import { InputBox } from '../../components/styles/StyleComponent'
 import { sampleMessage } from '../../constants/sampleData'
 import MessageComponent from '../../components/shared/messageComponent'
+import { getSocket } from '../../socket'
+import toast from 'react-hot-toast'
+import { NEW_MESSAGE } from '../../constants/event.js'
+import { useChatDetailsQuery } from '../../redux/api/api.js'
+import { useSocketEvents } from '../../hook/index.jsx'
+
 const user = {
   _id: 'jjdhhdnnnnjdnf',
   name: 'jamil afzal mughal',
 }
-const Chats = () => {
+const Chats = ({ chatId, members }) => {
   const containerRef = useRef(null)
-  return (
+  const [message, setMessage] = useState('')
+  const [messages, setMessages] = useState([])
+  const socket = getSocket()
+  const { data, isLoading, isError, error, reFetch } = useChatDetailsQuery({
+    chatId,
+    skip: !chatId,
+  })
+  const submitHandler = (e) => {
+    e.preventDefault()
+    if (!message.trim()) return toast.error('input field required')
+
+    socket.emit(NEW_MESSAGE, { chatId, members: data?.chat?.members, message })
+    setMessage('')
+  }
+  const newMessagesListeners = useCallback((data) => {
+    setMessages((prve) => [...prve, data.message])
+  }, [])
+  const listeners = {
+    [NEW_MESSAGE]: newMessagesListeners,
+  }
+  useSocketEvents(socket, listeners)
+  return isLoading ? (
+    <Skeleton />
+  ) : (
     <>
       <Stack
         ref={containerRef}
@@ -37,6 +66,7 @@ const Chats = () => {
         style={{
           height: '10%',
         }}
+        onSubmit={submitHandler}
       >
         <Stack
           direction={'row'}
@@ -54,8 +84,13 @@ const Chats = () => {
           >
             <AttachFileIcon />
           </IconButton>
-          <InputBox placeholder=" Type Message  Here.." />
+          <InputBox
+            placeholder=" Type Message  Here.."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
           <IconButton
+            type="submit"
             sx={{
               bgcolor: orange,
               color: 'white',

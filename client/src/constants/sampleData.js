@@ -205,7 +205,7 @@ export const sampleMessage = [
     attachments: [
       {
         public_id: 'asdsad 2',
-        url: 'https://i.pinimg.com/736x/be/4f/c5/be4fc5db3efb38e2030216bb0bef69c1.jpg',
+        url: 'https://www.w3schools.com/howto/img_avatar.png'
       },
     ],
     content:'',
