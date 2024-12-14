@@ -1,26 +1,48 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import Header from './Header'
 import Tittle from '../shared/tittle'
 import { Drawer, Grid, Skeleton } from '@mui/material'
 import ChatList from '../ChatList'
-import { samepleChats } from '../../constants/sampleData'
 import { useParams } from 'react-router-dom'
 import Profile from '../Profile'
 import { useMyChatsQuery } from '../../redux/api/api'
 import { useDispatch, useSelector } from 'react-redux'
 import { setIsMobile } from '../../redux/slice/misc/misc'
-import { useErrors } from '../../hook'
+import { useErrors, useSocketEvents } from '../../hook'
 import { getSocket } from '../../socket'
+import { NEW_MESSAGE_ALERT, NEW_REQUEST } from '../../constants/event.js'
+import {
+  incrementNotification,
+  setNewMessagesAlert,
+} from '../../redux/slice/chat/index.jsx'
+
 // it is HOC high order components take a component as a argument and return a new component
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
     const { chatId } = useParams()
     const { isMobile } = useSelector((state) => state.misc)
+    const { newMessagesAlert } = useSelector((state) => state.chat)
+    console.log("newMessagesAlert",newMessagesAlert)
     const dispatch = useDispatch()
     const socket = getSocket()
     const { isLoading, error, isError, isFetching, data } = useMyChatsQuery()
     const handleMobileClose = () => dispatch(setIsMobile(false))
     useErrors([{ isError, error }])
+
+    const newMessagesAlretHandler = useCallback(
+      (data) => {
+        dispatch(setNewMessagesAlert(data))
+      },
+      []
+    )
+    const newRequestHandler = useCallback(() => {
+      dispatch(incrementNotification())
+    }, [])
+    const eventListeners = {
+      [NEW_MESSAGE_ALERT]: newMessagesAlretHandler,
+      [NEW_REQUEST]: newRequestHandler,
+    }
+    useSocketEvents(socket, eventListeners)
     const handleChatDelete = (e, _id, groupChat) => {
       e.prevenetDefualt()
       console.log(_id, groupChat)
@@ -46,12 +68,7 @@ const AppLayout = () => (WrappedComponent) => {
               width={'60vh'}
               chats={data?.chats}
               chatId={chatId}
-              newMessagesAlert={[
-                {
-                  chatId,
-                  count: 4,
-                },
-              ]}
+              newMessagesAlert={newMessagesAlert}
               onlineUsers={['1', '2', '3']}
               handleChatDelete={handleChatDelete}
             />
@@ -74,12 +91,7 @@ const AppLayout = () => (WrappedComponent) => {
               <ChatList
                 chats={data?.chats}
                 chatId={chatId}
-                newMessagesAlert={[
-                  {
-                    chatId,
-                    count: 4,
-                  },
-                ]}
+                newMessagesAlert={newMessagesAlert}
                 onlineUsers={['1', '2', '3']}
                 handleChatDelete={handleChatDelete}
               />

@@ -7,7 +7,6 @@ import {
   Send as SendIcon,
 } from '@mui/icons-material'
 import { InputBox } from '../../components/styles/StyleComponent'
-import { sampleMessage } from '../../constants/sampleData'
 import MessageComponent from '../../components/shared/messageComponent'
 import { getSocket } from '../../socket'
 import toast from 'react-hot-toast'
@@ -50,7 +49,7 @@ const Chats = ({ chatId }) => {
   const allMessages = [...oldMessage, ...messages]
   useErrors([
     { isError, error },
-    { isError: oldChunkMessage.isError, error: oldChunkMessage.errors },
+    { isError: oldChunkMessage.isError, error: oldChunkMessage.error },
   ])
 
   const handleFileOpen = (e) => {
@@ -64,9 +63,21 @@ const Chats = ({ chatId }) => {
     socket.emit(NEW_MESSAGE, { chatId, members: data?.chat?.members, message })
     setMessage('')
   }
-  const newMessagesListeners = useCallback((data) => {
-    setMessages((prve) => [...prve, data.message])
-  }, [])
+  useEffect(() => {
+    return () => {
+      setMessage("")
+      setMessages([])
+      setPage(1)
+      setOldMessage([])
+    }
+  }, [chatId])
+  const newMessagesListeners = useCallback(
+    (data) => {
+      if (data?.chatId !== chatId) return
+      setMessages((prve) => [...prve, data.message])
+    },
+    [chatId]
+  )
   const listeners = {
     [NEW_MESSAGE]: newMessagesListeners,
   }

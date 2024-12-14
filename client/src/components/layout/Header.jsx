@@ -28,6 +28,7 @@ import {
   setIsNotification,
   setIsSearch,
 } from '../../redux/slice/misc/misc.js'
+import { resetNotification } from '../../redux/slice/chat/index.jsx'
 
 const SearchDialog = lazy(() => import('../Search'))
 const NotificationDialog = lazy(() => import('../Notification'))
@@ -39,6 +40,7 @@ const Header = () => {
   const dispatch = useDispatch()
   const handleMobile = () => dispatch(setIsMobile(true))
   const { isSearch, isNotification } = useSelector((state) => state.misc)
+  const {notificationCount } = useSelector((state) => state.chat)
 
   const openSearch = () => dispatch(setIsSearch(true))
 
@@ -56,7 +58,10 @@ const Header = () => {
     dispatch(userNotExists())
   }
 
-  const openNotification = () => dispatch(setIsNotification(true))
+  const openNotification = () => {
+      dispatch(setIsNotification(true))
+      dispatch(resetNotification())
+  }
 
   const closeNotification = () => dispatch(setIsNotification(false))
 
@@ -107,6 +112,7 @@ const Header = () => {
                 title={'Notifications'}
                 icon={<NotificationsIcon />}
                 onClick={openNotification}
+                value={notificationCount}
               />
               <IconBtn
                 title={'Logout'}
