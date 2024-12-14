@@ -9,7 +9,12 @@ import chatRoutes from './routes/chat.js'
 import adminRoutes from './routes/admin.js'
 import { Server } from 'socket.io'
 import { corsOption } from './constants/index.js'
-import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from './constants/event.js'
+import {
+  NEW_MESSAGE,
+  NEW_MESSAGE_ALERT,
+  START_TYPING,
+  STOP_TYPING,
+} from './constants/event.js'
 import { v4 as uuid } from 'uuid'
 import { getSocket } from './utills/index.js'
 import messageModel from './models/messageSchema.js'
@@ -34,18 +39,19 @@ app.use('/api/v1/admin', adminRoutes)
 
 cloudinaryConfig()
 io.use((socket, next) => {
-    cookieParser()(socket.request, socket.request.res, async (err) => {
-      if (err) {
-        return next(new Error('Cookie parsing failed'));
-      }
-      await socketAuthenticator(err, socket, next);
-    });
-  });
-app.set("io",io)
+  cookieParser()(socket.request, socket.request.res, async (err) => {
+    if (err) {
+      return next(new Error('Cookie parsing failed'))
+    }
+    await socketAuthenticator(err, socket, next)
+  })
+})
+app.set('io', io)
 io.on('connection', (socket) => {
   console.log('user connected', socket.id)
   const user = socket.user
   userSocketId.set(user._id.toString(), socket.id)
+
   socket.on(NEW_MESSAGE, async ({ chatId, message, members }) => {
     const messageForRealTime = {
       content: message,
@@ -78,12 +84,21 @@ io.on('connection', (socket) => {
     }
   })
 
+  socket.on(START_TYPING, ({ members, chatId }) => {
+    const socketMembers = getSocket(members)
+    socket.to(socketMembers).emit(START_TYPING, { chatId })
+  })
+
+  socket.on(STOP_TYPING, ({ members, chatId }) => {
+    const socketMembers = getSocket(members)
+    socket.to(socketMembers).emit(STOP_TYPING, { chatId })
+  })
+
   socket.on('disconnect', () => {
     console.log('user disconnected')
     userSocketId.delete(user._id.toString())
   })
 })
-
 
 server.listen(PORT, () => {
   console.log(`port is running on ${PORT}`)
