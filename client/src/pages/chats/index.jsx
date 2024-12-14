@@ -10,7 +10,11 @@ import { InputBox } from '../../components/styles/StyleComponent'
 import MessageComponent from '../../components/shared/messageComponent'
 import { getSocket } from '../../socket'
 import toast from 'react-hot-toast'
-import { NEW_MESSAGE } from '../../constants/event.js'
+import {
+  NEW_MESSAGE,
+  START_TYPING,
+  STOP_TYPING,
+} from '../../constants/event.js'
 import { useInfiniteScrollTop } from '6pp'
 import {
   useChatDetailsQuery,
@@ -20,12 +24,20 @@ import { useErrors, useSocketEvents } from '../../hook/index.jsx'
 import { useDispatch, useSelector } from 'react-redux'
 import FileMenu from '../../components/shared/fileMenu/index.jsx'
 import { setFileMenu } from '../../redux/slice/misc/misc.js'
+import { deletMessagesAlert } from '../../redux/slice/chat/index.jsx'
+import TypingLoader from '../../components/typingLoader.jsx'
 
 const Chats = ({ chatId }) => {
   const containerRef = useRef(null)
+  const bottomRef = useRef(null)
+
   const [message, setMessage] = useState('')
   const [messages, setMessages] = useState([])
   const [page, setPage] = useState(1)
+
+  const [iAmTyping, setIamTyping] = useState(false)
+  const [userTyping, setUserTyping] = useState(false)
+  const typingTimeout = useRef(null)
   const [fileMenuAnchor, setFileMenuAnchor] = useState(null)
   const dispatch = useDispatch()
   const socket = getSocket()
@@ -34,10 +46,30 @@ const Chats = ({ chatId }) => {
     chatId,
     skip: !chatId,
   })
+  const members = data?.chat?.members
+
   const oldChunkMessage = useGetMyMessageQuery({
     chatId,
     page,
   })
+
+  const messageOnChange = (e) => {
+    setMessage(e.target.value);
+  
+    if (!iAmTyping) {
+      socket.emit(START_TYPING, { members, chatId });
+      setIamTyping(true);
+    }
+  
+    if (typingTimeout.current) clearTimeout(typingTimeout.current);
+  
+    // Emit STOP_TYPING after 2 seconds of inactivity
+    typingTimeout.current = setTimeout(() => {
+      socket.emit(STOP_TYPING, { members, chatId });
+      setIamTyping(false);
+    }, 2000); // Correctly set the delay as a number
+  };
+  
 
   const { data: oldMessage, setData: setOldMessage } = useInfiniteScrollTop(
     containerRef,
@@ -63,14 +95,22 @@ const Chats = ({ chatId }) => {
     socket.emit(NEW_MESSAGE, { chatId, members: data?.chat?.members, message })
     setMessage('')
   }
+
   useEffect(() => {
+    if (bottomRef.current)
+      bottomRef.current.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
+  useEffect(() => {
+    dispatch(deletMessagesAlert(chatId))
     return () => {
-      setMessage("")
+      setMessage('')
       setMessages([])
       setPage(1)
       setOldMessage([])
     }
   }, [chatId])
+
   const newMessagesListeners = useCallback(
     (data) => {
       if (data?.chatId !== chatId) return
@@ -78,8 +118,29 @@ const Chats = ({ chatId }) => {
     },
     [chatId]
   )
+
+  const startTyingListeners = useCallback(
+    (data) => {
+      console.log(data)
+      if (data.chatId !== chatId) return
+      setUserTyping(true)
+    },
+    [chatId]
+  )
+
+  const stopTypingListeners = useCallback(
+    (data) => {
+      console.log(data)
+      if (data.chatId !== chatId) return
+      setUserTyping(false)
+    },
+    [chatId]
+  )
+
   const listeners = {
     [NEW_MESSAGE]: newMessagesListeners,
+    [START_TYPING]: startTyingListeners,
+    [STOP_TYPING]: stopTypingListeners,
   }
   useSocketEvents(socket, listeners)
   return isLoading ? (
@@ -101,6 +162,9 @@ const Chats = ({ chatId }) => {
         {allMessages?.map((i) => (
           <MessageComponent message={i} user={user} key={i._id} />
         ))}
+
+        {userTyping && <TypingLoader />}
+        <div ref={bottomRef} />
       </Stack>
       <form
         style={{
@@ -128,7 +192,7 @@ const Chats = ({ chatId }) => {
           <InputBox
             placeholder=" Type Message  Here.."
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={messageOnChange}
           />
           <IconButton
             type="submit"

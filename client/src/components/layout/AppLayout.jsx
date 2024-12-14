@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import Header from './Header'
 import Tittle from '../shared/tittle'
 import { Drawer, Grid, Skeleton } from '@mui/material'
@@ -15,6 +15,7 @@ import {
   incrementNotification,
   setNewMessagesAlert,
 } from '../../redux/slice/chat/index.jsx'
+import { getOrSaveFromStorage } from '../../lib/feature.js'
 
 // it is HOC high order components take a component as a argument and return a new component
 const AppLayout = () => (WrappedComponent) => {
@@ -22,18 +23,21 @@ const AppLayout = () => (WrappedComponent) => {
     const { chatId } = useParams()
     const { isMobile } = useSelector((state) => state.misc)
     const { newMessagesAlert } = useSelector((state) => state.chat)
-    console.log("newMessagesAlert",newMessagesAlert)
     const dispatch = useDispatch()
     const socket = getSocket()
     const { isLoading, error, isError, isFetching, data } = useMyChatsQuery()
     const handleMobileClose = () => dispatch(setIsMobile(false))
     useErrors([{ isError, error }])
 
+    useEffect(() => {
+      getOrSaveFromStorage({ key: NEW_MESSAGE_ALERT, value: newMessagesAlert })
+    }, [newMessagesAlert])
     const newMessagesAlretHandler = useCallback(
       (data) => {
+        if (data.chatId == chatId) return
         dispatch(setNewMessagesAlert(data))
       },
-      []
+      [chatId]
     )
     const newRequestHandler = useCallback(() => {
       dispatch(incrementNotification())

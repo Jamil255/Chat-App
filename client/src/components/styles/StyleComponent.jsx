@@ -57,15 +57,15 @@ const SearchField = styled('input')`
    }
 ;`;
 
-//  const bounceAnimation = keyframes`
-//  0% { transform: scale(1); }
-//  50% { transform: scale(1.5); }
-//  100% { transform: scale(1); }
-//  `;
+ const bounceAnimation = keyframes`
+ 0% { transform: scale(1); }
+ 50% { transform: scale(1.5); }
+ 100% { transform: scale(1); }
+ `;
 
-//  const BouncingSkeleton = styled(Skeleton)(() => ({
-//    animation: `${bounceAnimation} 1s infinite`,
-//  }));
+ const BouncingSkeleton = styled(Skeleton)(() => ({
+   animation: `${bounceAnimation} 1s infinite`,
+ }));
 
 export {
    CurveButton,
@@ -73,5 +73,5 @@ export {
   InputBox,
   Link,
   VisuallyHiddenInput,
-//    BouncingSkeleton,
+   BouncingSkeleton,
 }
