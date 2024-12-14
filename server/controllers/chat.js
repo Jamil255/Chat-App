@@ -305,7 +305,6 @@ const sendAttachment = async (req, res) => {
       })
     }
       const attachments = await uploadFilesToCloudinary(files)
-      console.log(attachments)
     const messageForDB = {
       attachments,
       content: '',

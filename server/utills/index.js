@@ -8,7 +8,9 @@ export const cookieOptions = {
 }
 
 export const emitEvent = (req, event, users, data) => {
-  console.log(event)
+  const io = req.app.get('io')
+  const userSocket = getSocket(users)
+  io.to(userSocket).emit(event, data)
 }
 
 export const getSocket = (users = []) =>
