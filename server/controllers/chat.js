@@ -14,7 +14,6 @@ import {
 } from '../utills/feature.js'
 import { cloudinaryUploader } from '../config/CloudinaryConfig.js'
 import messageModel from '../models/messageSchema.js'
-import fs from 'fs'
 const newGroupChat = async (req, res) => {
   try {
     const { name, members } = req.body
@@ -226,7 +225,7 @@ const removeMember = async (req, res) => {
 
 const leaveGroup = async (req, res) => {
   try {
-    const chatId = req.params.id
+    const chatId = req.params.chatId
     const chat = await chatModel.findById(chatId)
     if (!chat) {
       return res.status(400).json({
@@ -304,7 +303,7 @@ const sendAttachment = async (req, res) => {
         status: false,
       })
     }
-      const attachments = await uploadFilesToCloudinary(files)
+    const attachments = await uploadFilesToCloudinary(files)
     const messageForDB = {
       attachments,
       content: '',
@@ -387,7 +386,7 @@ const getChatDetails = async (req, res) => {
 
 const renameGroup = async (req, res) => {
   try {
-    const chatId = req.params.id
+    const chatId = req.params.chatId
     const { name } = req.body
     const chat = await chatModel.findById(chatId)
     if (!chat) {

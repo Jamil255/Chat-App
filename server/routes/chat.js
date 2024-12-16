@@ -31,12 +31,8 @@ app.get('/my/chat', getMyChats)
 app.get('/my/group', getMyGroup)
 app.put('/addmember', addMemberValidator(), validateHandler, addMember)
 app.put('/removemember', removeMemberValidator(), validateHandler, removeMember)
-app.delete('/delete/:id', chatIdValidator(), validateHandler, leaveGroup)
-app.post(
-    '/message',
-    attachmentsMulter,
-  sendAttachment
-)
+app.delete('/delete/:chatId', chatIdValidator(), validateHandler, leaveGroup)
+app.post('/message', attachmentsMulter, sendAttachment)
 app.get('/message/:chatId', chatIdValidator(), validateHandler, getMessage)
 
 app
