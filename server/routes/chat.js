@@ -26,9 +26,9 @@ import { attachmentsMulter } from '../middleware/multer.js'
 const app = express()
 
 app.use(isAuthenticated)
-app.post('/new', newGroupValidator(), validateHandler, newGroupChat)
-app.get('/my', getMyChats)
-app.get('/mygroup', getMyGroup)
+app.post('/new/group', newGroupValidator(), validateHandler, newGroupChat)
+app.get('/my/chat', getMyChats)
+app.get('/my/group', getMyGroup)
 app.put('/addmember', addMemberValidator(), validateHandler, addMember)
 app.put('/removemember', removeMemberValidator(), validateHandler, removeMember)
 app.delete('/delete/:id', chatIdValidator(), validateHandler, leaveGroup)
