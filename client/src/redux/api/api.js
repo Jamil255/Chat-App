@@ -8,7 +8,7 @@ const api = createApi({
   endpoints: (builder) => ({
     myChats: builder.query({
       query: () => ({
-        url: '/chat/my',
+        url: '/chat/my/chat',
         credentials: 'include',
       }),
       providesTags: ['Chat'],
@@ -63,7 +63,7 @@ const api = createApi({
         credentials: 'include',
       }),
 
-       keepUnusedDataFor: 0,
+      keepUnusedDataFor: 0,
     }),
     sendAttachment: builder.mutation({
       query: (data) => ({
@@ -72,6 +72,35 @@ const api = createApi({
         credentials: 'include',
         body: data,
       }),
+    }),
+    getMyGroup: builder.query({
+      query: () => ({
+        url: '/chat/my/group',
+        credentials: 'include',
+      }),
+
+      providesTags: ['Chat'],
+    }),
+    NewGroup: builder.mutation({
+      query: (data) => ({
+        url: '/chat/new/group',
+        method: 'POST',
+        credentials: 'include',
+        body: data,
+      }),
+      invalidatesTags: ['Chat'],
+    }),
+    getMyFriends: builder.query({
+      query: ({ chatId }) => {
+        let url = `/user/friend`
+        if (chatId) url += `?${chatId}=${chatId}`
+        return {
+          url,
+          credentials: 'include',
+        }
+      },
+
+      providesTags: ['Chat'],
     }),
   }),
 })
@@ -85,4 +114,7 @@ export const {
   useChatDetailsQuery,
   useGetMyMessageQuery,
   useSendAttachmentMutation,
+  useGetMyGroupQuery,
+  useNewGroupMutation,
+  useGetMyFriendsQuery,
 } = api

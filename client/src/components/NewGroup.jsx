@@ -3,6 +3,7 @@ import {
   Dialog,
   DialogTitle,
   IconButton,
+  Skeleton,
   Stack,
   TextField,
   Typography,
@@ -11,10 +12,20 @@ import CloseIcon from '@mui/icons-material/Close'
 import React, { useState } from 'react'
 import { sampleUsers } from '../constants/sampleData'
 import UserItem from './shared/userItem'
+import { useDispatch, useSelector } from 'react-redux'
+import { setIsNewGroup } from '../redux/slice/misc/misc'
+import { useGetMyFriendsQuery, useNewGroupMutation } from '../redux/api/api'
+import { useAsyncMutation, useErrors } from '../hook'
 const NewGroup = ({ onClose }) => {
   const [groupName, setGroupName] = useState('')
-  const [member, setMember] = useState(sampleUsers)
   const [selectMember, setSelectMembers] = useState([])
+  const dispatch = useDispatch()
+  const { isNewGroup } = useSelector((state) => state.misc)
+  const { data, isError, error, isLoading } = useGetMyFriendsQuery('')
+
+  const [newGroup, isLoadingNewGroup] = useAsyncMutation(useNewGroupMutation)
+
+  useErrors([{ isError, error }])
   const selectMemberHandler = (id) => {
     setSelectMembers((prev) =>
       prev.includes(id)
@@ -23,12 +34,17 @@ const NewGroup = ({ onClose }) => {
     )
   }
   const submitHandler = () => {
-    console.log('submitHandler')
+    newGroup('Group creating ...', { name: groupName, members: selectMember })
+    dispatch(setIsNewGroup(false))
   }
+  const onCloseHandler = () => {
+    dispatch(setIsNewGroup(false))
+  }
+
   return (
     <Dialog
-      open
-      onClose={onClose}
+      open={isNewGroup}
+      onClose={onCloseHandler}
       sx={{
         '& .MuiDialog-paper': {
           maxWidth: '400px',
@@ -58,14 +74,18 @@ const NewGroup = ({ onClose }) => {
         />
         <Typography>Member</Typography>
         <Stack>
-          {member?.map((user) => (
-            <UserItem
-              user={user}
-              key={user?._id}
-              handler={selectMemberHandler}
-              isAdded={selectMember.includes(user?._id)}
-            />
-          ))}
+          {isLoading ? (
+            <Skeleton />
+          ) : (
+            data?.friends?.map((user) => (
+              <UserItem
+                user={user}
+                key={user?._id}
+                handler={selectMemberHandler}
+                isAdded={selectMember.includes(user?._id)}
+              />
+            ))
+          )}
         </Stack>
 
         <Stack
@@ -73,10 +93,20 @@ const NewGroup = ({ onClose }) => {
           justifyContent={'space-evenly'}
           marginTop={'10px'}
         >
-          <Button variant="contained" color="error" size="large">
+          <Button
+            variant="contained"
+            color="error"
+            size="large"
+            onClick={onCloseHandler}
+          >
             Cancel
           </Button>
-          <Button variant="contained" size="large" onClick={submitHandler}>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={submitHandler}
+            disabled={isLoadingNewGroup}
+          >
             Create
           </Button>
         </Stack>

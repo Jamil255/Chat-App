@@ -26,6 +26,8 @@ import { bgGradient, matBlack } from '../../constants/color'
 import GroupList from '../../components/shared/groupList'
 import { samepleChats, sampleUsers } from '../../constants/sampleData'
 import UserItem from '../../components/shared/userItem'
+import { useGetMyGroupQuery } from '../../redux/api/api'
+import { useErrors } from '../../hook'
 const ConfirmDeleteDialog = lazy(() =>
   import('../../components/ConfirmDeleteDialog')
 )
@@ -40,6 +42,9 @@ const Group = () => {
   const chatId = useSearchParams()[0].get('group')
   const navigate = useNavigate()
   const navigateToBack = () => navigate('/')
+  const getMyGroup = useGetMyGroupQuery()
+  console.log(getMyGroup)
+  useErrors([{ isError: getMyGroup?.isError, error: getMyGroup?.error }])
   const handleMobile = () => {
     setIsMobileOpenMenu((prve) => !prve)
   }
@@ -191,7 +196,7 @@ const Group = () => {
         }}
         sm={4}
       >
-        <GroupList myGroups={samepleChats} chatId={chatId} />
+        <GroupList myGroups={getMyGroup?.data?.groups} chatId={chatId} />
       </Grid>
       <Grid
         item
@@ -272,7 +277,7 @@ const Group = () => {
         open={isMobileOpenMenu}
         onClose={handleMobileClose}
       >
-        <GroupList width={'50vw'} myGroups={samepleChats} chatId={chatId} />
+        <GroupList width={'50vw'} myGroups={getMyGroup?.data?.groups} chatId={chatId} />
       </Drawer>
     </Grid>
   )

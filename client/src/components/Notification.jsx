@@ -54,12 +54,12 @@ const Notification = ({ onClose }) => {
           </IconButton>
         </DialogTitle>
 
-        {data?.allRequests?.length > 0 ? (
+        {data?.allRequests?.length >0 ? (
           data?.allRequests?.map((sender, _id) => (
             <NotificationItem
               key={_id}
               sender={sender}
-              _id={sender._id}
+              _id={sender?._id}
               handler={friendRequestHandler}
             />
           ))

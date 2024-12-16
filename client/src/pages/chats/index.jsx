@@ -54,22 +54,21 @@ const Chats = ({ chatId }) => {
   })
 
   const messageOnChange = (e) => {
-    setMessage(e.target.value);
-  
+    setMessage(e.target.value)
+
     if (!iAmTyping) {
-      socket.emit(START_TYPING, { members, chatId });
-      setIamTyping(true);
+      socket.emit(START_TYPING, { members, chatId })
+      setIamTyping(true)
     }
-  
-    if (typingTimeout.current) clearTimeout(typingTimeout.current);
-  
+
+    if (typingTimeout.current) clearTimeout(typingTimeout.current)
+
     // Emit STOP_TYPING after 2 seconds of inactivity
     typingTimeout.current = setTimeout(() => {
-      socket.emit(STOP_TYPING, { members, chatId });
-      setIamTyping(false);
-    }, 2000); // Correctly set the delay as a number
-  };
-  
+      socket.emit(STOP_TYPING, { members, chatId })
+      setIamTyping(false)
+    }, 2000)
+  }
 
   const { data: oldMessage, setData: setOldMessage } = useInfiniteScrollTop(
     containerRef,

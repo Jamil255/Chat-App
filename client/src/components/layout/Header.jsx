@@ -25,6 +25,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { userNotExists } from '../../redux/slice/auth/signupSlice.js'
 import {
   setIsMobile,
+  setIsNewGroup,
   setIsNotification,
   setIsSearch,
 } from '../../redux/slice/misc/misc.js'
@@ -35,17 +36,18 @@ const NotificationDialog = lazy(() => import('../Notification'))
 const NewGroupDialog = lazy(() => import('../NewGroup'))
 
 const Header = () => {
-  const [isNewGroup, setIsNewGroup] = useState(false)
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const handleMobile = () => dispatch(setIsMobile(true))
-  const { isSearch, isNotification } = useSelector((state) => state.misc)
-  const {notificationCount } = useSelector((state) => state.chat)
+  const { isSearch, isNotification, isNewGroup } = useSelector(
+    (state) => state.misc
+  )
+  const { notificationCount } = useSelector((state) => state.chat)
 
   const openSearch = () => dispatch(setIsSearch(true))
 
   const openNewGroup = () => {
-    setIsNewGroup((prev) => !prev)
+    dispatch(setIsNewGroup(true))
   }
 
   const navigateToGroup = () => navigate('/group')
@@ -59,15 +61,15 @@ const Header = () => {
   }
 
   const openNotification = () => {
-      dispatch(setIsNotification(true))
-      dispatch(resetNotification())
+    dispatch(setIsNotification(true))
+    dispatch(resetNotification())
   }
 
   const closeNotification = () => dispatch(setIsNotification(false))
 
   const closeSearch = () => dispatch(setIsSearch(false))
   const closeNewGroup = () => {
-    setIsNewGroup(false) // Close notification dialog
+    dispatch(setIsNewGroup(false))
   }
 
   return (
