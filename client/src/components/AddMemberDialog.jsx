@@ -1,11 +1,32 @@
-import { Button, Dialog, DialogTitle, Stack, Typography } from '@mui/material'
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  Skeleton,
+  Stack,
+  Typography,
+} from '@mui/material'
 import React, { useState } from 'react'
 import { sampleUsers } from '../constants/sampleData'
 import UserItem from '../components/shared/userItem/index'
+import { useDispatch, useSelector } from 'react-redux'
+import { setIsAddMember } from '../redux/slice/misc/misc'
+import {
+  useAddGroupMemberMutation,
+  useGetMyFriendsQuery,
+} from '../redux/api/api'
+import { useAsyncMutation, useErrors } from '../hook'
 
-const AddMemberDialog = ({ addMember, isLoadingAddMember, chatId }) => {
-  const [member, setMember] = useState(sampleUsers)
+const AddMemberDialog = ({ chatId }) => {
   const [selectMember, setSelectMembers] = useState([])
+  const dispatch = useDispatch()
+  const { isAddMember } = useSelector((state) => state.misc)
+
+  const { data, isError, error, isLoading } = useGetMyFriendsQuery(chatId)
+  const [addMember, isLoadingAddMember] = useAsyncMutation(
+    useAddGroupMemberMutation
+  )
+
   const selectMemberHandler = (id) => {
     setSelectMembers((prev) =>
       prev.includes(id)
@@ -14,19 +35,21 @@ const AddMemberDialog = ({ addMember, isLoadingAddMember, chatId }) => {
     )
   }
   const onCloseHandler = () => {
-    setMember([])
-    setSelectMembers([])
+    dispatch(setIsAddMember(false))
   }
   const addMemberSubmitHandler = () => {
     onCloseHandler()
+    addMember('Add Member ..', { chatId, members: selectMember })
   }
   return (
-    <Dialog open onClose={onCloseHandler}>
+    <Dialog open={isAddMember} onClose={onCloseHandler}>
       <Stack p={'2rem'} spacing={'2rem'} width={'20rem'}>
         <DialogTitle textAlign={'center'}>Add Member</DialogTitle>
         <Stack spacing={'1rem'}>
-          {member.length > 0 ? (
-            member?.map((i) => (
+          {isLoading ? (
+            <Skeleton />
+          ) : data?.friends?.length > 0 ? (
+            data?.friends?.map((i) => (
               <UserItem
                 key={i._id}
                 user={i}

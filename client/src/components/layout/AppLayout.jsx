@@ -3,7 +3,7 @@ import Header from './Header'
 import Tittle from '../shared/tittle'
 import { Drawer, Grid, Skeleton } from '@mui/material'
 import ChatList from '../ChatList'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import Profile from '../Profile'
 import { useMyChatsQuery } from '../../redux/api/api'
 import { useDispatch, useSelector } from 'react-redux'
@@ -28,6 +28,7 @@ const AppLayout = () => (WrappedComponent) => {
     const { isMobile } = useSelector((state) => state.misc)
     const { newMessagesAlert } = useSelector((state) => state.chat)
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const socket = getSocket()
     const { isLoading, error, isError, refetch, data } = useMyChatsQuery()
     const handleMobileClose = () => dispatch(setIsMobile(false))
@@ -49,7 +50,8 @@ const AppLayout = () => (WrappedComponent) => {
 
     const newRefetchListener = useCallback(() => {
       refetch()
-    }, [refetch])
+      navigate('/')
+    }, [refetch, navigate])
     const eventListeners = {
       [NEW_MESSAGE_ALERT]: newMessagesAlretListener,
       [NEW_REQUEST]: newRequestListener,
