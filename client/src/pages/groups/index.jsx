@@ -2,25 +2,25 @@ import React, { lazy, Suspense, useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 
 import {
-    Add as AddIcon,
-    Delete as DeleteIcon,
-    Done as DoneIcon,
-    Edit as EditIcon,
-    KeyboardBackspace as KeyboardBackspaceIcon,
-    Menu as MenuIcon,
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  Done as DoneIcon,
+  Edit as EditIcon,
+  KeyboardBackspace as KeyboardBackspaceIcon,
+  Menu as MenuIcon,
 } from '@mui/icons-material'
 import {
-    Backdrop,
-    Box,
-    Button,
-    CircularProgress,
-    Drawer,
-    Grid,
-    IconButton,
-    Stack,
-    TextField,
-    Tooltip,
-    Typography
+  Backdrop,
+  Box,
+  Button,
+  CircularProgress,
+  Drawer,
+  Grid,
+  IconButton,
+  Stack,
+  TextField,
+  Tooltip,
+  Typography,
 } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import GroupList from '../../components/shared/groupList'
@@ -28,11 +28,11 @@ import UserItem from '../../components/shared/userItem'
 import { bgGradient, matBlack } from '../../constants/color'
 import { useAsyncMutation, useErrors } from '../../hook'
 import {
-    useChatDetailsQuery,
-    useGetMyGroupQuery,
-    useLeaveGroupMutation,
-    useRemoveGroupMemberMutation,
-    useRenameGroupMutation,
+  useChatDetailsQuery,
+  useGetMyGroupQuery,
+  useLeaveGroupMutation,
+  useRemoveGroupMemberMutation,
+  useRenameGroupMutation,
 } from '../../redux/api/api'
 import { setIsAddMember } from '../../redux/slice/misc/misc'
 const ConfirmDeleteDialog = lazy(() =>
@@ -109,6 +109,7 @@ const Group = () => {
   const deleteHandler = () => {
     deleteGroup('delete group ..', { chatId })
     setConfirmDeleteDialog(false)
+    setGroupName('')
     navigate('/group')
   }
   const removeMemberHandler = (userId) => {
@@ -244,7 +245,7 @@ const Group = () => {
         }}
       >
         {IconBtns}
-        {GroupName && (
+        {groupName && (
           <>
             <Typography
               sx={{
