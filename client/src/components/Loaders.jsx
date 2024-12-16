@@ -13,7 +13,8 @@ const AppLayoutLoader = () => {
           height: '100%',
         }}
       >
-        {/* <Skeleton variant="rectangular" height={'100vh'} spacing={"1rem"} /> */}
+        <Skeleton variant="rectangular" height={'100vh'} spacing={"1rem"} />
+        <Skeleton variant="rectangular" height={'100vh'} spacing={"1rem"} />
       </Grid>
       <Grid item xs={12} sm={8} md={5} lg={6} sx={{ height: '100%' }}>
         <Stack spacing={'1rem'}>

@@ -10,7 +10,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setIsMobile } from '../../redux/slice/misc/misc'
 import { useErrors, useSocketEvents } from '../../hook'
 import { getSocket } from '../../socket'
-import { NEW_MESSAGE_ALERT, NEW_REQUEST } from '../../constants/event.js'
+import {
+  NEW_MESSAGE_ALERT,
+  NEW_REQUEST,
+  REFETCH_CHATS,
+} from '../../constants/event.js'
 import {
   incrementNotification,
   setNewMessagesAlert,
@@ -25,26 +29,31 @@ const AppLayout = () => (WrappedComponent) => {
     const { newMessagesAlert } = useSelector((state) => state.chat)
     const dispatch = useDispatch()
     const socket = getSocket()
-    const { isLoading, error, isError, isFetching, data } = useMyChatsQuery()
+    const { isLoading, error, isError, refetch, data } = useMyChatsQuery()
     const handleMobileClose = () => dispatch(setIsMobile(false))
     useErrors([{ isError, error }])
 
     useEffect(() => {
       getOrSaveFromStorage({ key: NEW_MESSAGE_ALERT, value: newMessagesAlert })
     }, [newMessagesAlert])
-    const newMessagesAlretHandler = useCallback(
+    const newMessagesAlretListener = useCallback(
       (data) => {
         if (data.chatId == chatId) return
         dispatch(setNewMessagesAlert(data))
       },
       [chatId]
     )
-    const newRequestHandler = useCallback(() => {
+    const newRequestListener = useCallback(() => {
       dispatch(incrementNotification())
     }, [])
+
+    const newRefetchListener = useCallback(() => {
+      refetch()
+    }, [refetch])
     const eventListeners = {
-      [NEW_MESSAGE_ALERT]: newMessagesAlretHandler,
-      [NEW_REQUEST]: newRequestHandler,
+      [NEW_MESSAGE_ALERT]: newMessagesAlretListener,
+      [NEW_REQUEST]: newRequestListener,
+      [REFETCH_CHATS]: newRefetchListener,
     }
     useSocketEvents(socket, eventListeners)
     const handleChatDelete = (e, _id, groupChat) => {

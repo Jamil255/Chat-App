@@ -11,6 +11,7 @@ import MessageComponent from '../../components/shared/messageComponent'
 import { getSocket } from '../../socket'
 import toast from 'react-hot-toast'
 import {
+  ALERT,
   NEW_MESSAGE,
   START_TYPING,
   STOP_TYPING,
@@ -129,15 +130,31 @@ const Chats = ({ chatId }) => {
 
   const stopTypingListeners = useCallback(
     (data) => {
-      console.log(data)
       if (data.chatId !== chatId) return
       setUserTyping(false)
     },
     [chatId]
   )
 
+  const alertListener = useCallback(
+    (content) => {
+      const messageForAlert = {
+        content,
+        sender: {
+          _id: 'djasdhajksdhasdsadasdas',
+          name: 'Admin',
+        },
+        chat: chatId,
+        createdAt: new Date().toISOString(),
+      }
+
+      setMessages((prev) => [...prev, messageForAlert])
+    },
+    [chatId]
+  )
   const listeners = {
     [NEW_MESSAGE]: newMessagesListeners,
+    [ALERT]: alertListener,
     [START_TYPING]: startTyingListeners,
     [STOP_TYPING]: stopTypingListeners,
   }

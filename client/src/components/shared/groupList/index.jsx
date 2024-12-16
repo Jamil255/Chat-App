@@ -3,7 +3,6 @@ import React from 'react'
 import GroupListItem from '../groupItem'
 import { bgGradient } from '../../../constants/color'
 const GroupList = ({ width = '100%', myGroups = [], chatId }) => {
-  console.log(myGroups)
   return (
     <Stack
       width={width}
