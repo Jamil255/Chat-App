@@ -44,7 +44,7 @@ const miscSlice = createSlice({
       state.uploadingLoader = action.payload
     },
     setSelectDeleteChat: (state, action) => {
-      state.deleteChat = action.payload
+      state.selectDeleteChat = action.payload
     },
   },
 })

@@ -1,15 +1,16 @@
-import React from 'react'
-import { Avatar, Stack, Typography } from '@mui/material'
 import {
-  Face as FaceIcon,
-  AlternateEmail as UserNameIcon,
-  CalendarMonth as CalendarIcon,
+    CalendarMonth as CalendarIcon,
+    Face as FaceIcon,
+    AlternateEmail as UserNameIcon,
 } from '@mui/icons-material'
+import { Avatar, Stack, Typography } from '@mui/material'
 import moment from 'moment'
+import React from 'react'
 import { useSelector } from 'react-redux'
 import { transformImage } from '../lib/feature'
 const Profile = ({ user }) => {
-  const { data } = useSelector((state) => state.signup)
+    const { data } = useSelector((state) => state.signup)
+ 
   return (
     <Stack spacing={'2rem'} direction={'column'} alignItems={'center'}>
       <Avatar

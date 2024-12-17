@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import Header from './Header'
 import Tittle from '../shared/tittle'
 import { Drawer, Grid, Skeleton } from '@mui/material'
@@ -7,7 +7,11 @@ import { useNavigate, useParams } from 'react-router-dom'
 import Profile from '../Profile'
 import { useMyChatsQuery } from '../../redux/api/api'
 import { useDispatch, useSelector } from 'react-redux'
-import { setIsMobile } from '../../redux/slice/misc/misc'
+import {
+  setIsDeleteMenu,
+  setIsMobile,
+  setSelectDeleteChat,
+} from '../../redux/slice/misc/misc'
 import { useErrors, useSocketEvents } from '../../hook'
 import { getSocket } from '../../socket'
 import {
@@ -20,16 +24,20 @@ import {
   setNewMessagesAlert,
 } from '../../redux/slice/chat/index.jsx'
 import { getOrSaveFromStorage } from '../../lib/feature.js'
+import DeleteChatMenu from '../shared/deletechat/index.jsx'
 
 // it is HOC high order components take a component as a argument and return a new component
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
     const { chatId } = useParams()
+    const deleteMenuAnchor = useRef(null)
+
     const { isMobile } = useSelector((state) => state.misc)
     const { newMessagesAlert } = useSelector((state) => state.chat)
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const socket = getSocket()
+
     const { isLoading, error, isError, refetch, data } = useMyChatsQuery()
     const handleMobileClose = () => dispatch(setIsMobile(false))
     useErrors([{ isError, error }])
@@ -58,14 +66,17 @@ const AppLayout = () => (WrappedComponent) => {
       [REFETCH_CHATS]: newRefetchListener,
     }
     useSocketEvents(socket, eventListeners)
-    const handleChatDelete = (e, _id, groupChat) => {
-      e.prevenetDefualt()
-      console.log(_id, groupChat)
+    const handleChatDelete = (e, chatId, groupChat) => {
+      dispatch(setIsDeleteMenu(true))
+      dispatch(setSelectDeleteChat({ chatId, groupChat }))
+      deleteMenuAnchor.current = e.currentTarget
     }
-
     return (
       <>
         <Tittle />
+        <DeleteChatMenu
+          deleteMenuAnchor={deleteMenuAnchor}
+        />
         {isLoading ? (
           <Skeleton />
         ) : (

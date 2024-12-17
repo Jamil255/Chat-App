@@ -12,7 +12,7 @@ const ChatList = ({
       count: 0,
     },
   ],
-  handleDeleteChat,
+  handleChatDelete,
 }) => {
   return (
     <Stack width={w} direction={'column'} overflow={'auto'} height={'100%'}>
@@ -36,7 +36,7 @@ const ChatList = ({
             key={_id}
             groupChat={groupChat}
             sameSender={chatId === _id}
-            handleDeleteChat={handleDeleteChat}
+            handleChatDelete={handleChatDelete}
           />
         )
       })}
