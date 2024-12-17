@@ -102,7 +102,7 @@ const Group = () => {
   const openConfirmAddMember = () => dispatch(setIsAddMember(true));
 
   const deleteHandler = () => {
-    deleteGroup("delete group ..", { chatId });
+    deleteGroup("delete group ..", chatId);
     setConfirmDeleteDialog(false);
     setGroupName("");
     navigate("/group");

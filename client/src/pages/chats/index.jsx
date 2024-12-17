@@ -1,32 +1,33 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import AppLayout from '../../components/layout/AppLayout.jsx'
-import { IconButton, Skeleton, Stack } from '@mui/material'
-import { grayColor, orange } from '../../constants/color.js'
+import { useInfiniteScrollTop } from '6pp'
 import {
   AttachFile as AttachFileIcon,
   Send as SendIcon,
 } from '@mui/icons-material'
-import { InputBox } from '../../components/styles/StyleComponent'
-import MessageComponent from '../../components/shared/messageComponent'
-import { getSocket } from '../../socket'
+import { IconButton, Skeleton, Stack } from '@mui/material'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import toast from 'react-hot-toast'
+import { useDispatch, useSelector } from 'react-redux'
+import AppLayout from '../../components/layout/AppLayout.jsx'
+import FileMenu from '../../components/shared/fileMenu/index.jsx'
+import MessageComponent from '../../components/shared/messageComponent'
+import { InputBox } from '../../components/styles/StyleComponent'
+import TypingLoader from '../../components/typingLoader.jsx'
+import { grayColor, orange } from '../../constants/color.js'
 import {
   ALERT,
   NEW_MESSAGE,
   START_TYPING,
   STOP_TYPING,
 } from '../../constants/event.js'
-import { useInfiniteScrollTop } from '6pp'
+import { useErrors, useSocketEvents } from '../../hook/index.jsx'
 import {
   useChatDetailsQuery,
   useGetMyMessageQuery,
 } from '../../redux/api/api.js'
-import { useErrors, useSocketEvents } from '../../hook/index.jsx'
-import { useDispatch, useSelector } from 'react-redux'
-import FileMenu from '../../components/shared/fileMenu/index.jsx'
-import { setFileMenu } from '../../redux/slice/misc/misc.js'
 import { deletMessagesAlert } from '../../redux/slice/chat/index.jsx'
-import TypingLoader from '../../components/typingLoader.jsx'
+import { setFileMenu } from '../../redux/slice/misc/misc.js'
+import { getSocket } from '../../socket'
+import { useNavigate } from 'react-router-dom'
 
 const Chats = ({ chatId }) => {
   const containerRef = useRef(null)
@@ -41,6 +42,7 @@ const Chats = ({ chatId }) => {
   const typingTimeout = useRef(null)
   const [fileMenuAnchor, setFileMenuAnchor] = useState(null)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const socket = getSocket()
   const user = useSelector((state) => state.signup)
   const { data, isLoading, isError, error, reFetch } = useChatDetailsQuery({
@@ -95,6 +97,10 @@ const Chats = ({ chatId }) => {
     socket.emit(NEW_MESSAGE, { chatId, members: data?.chat?.members, message })
     setMessage('')
   }
+
+  useEffect(() => {
+    if (isError) return navigate('/')
+  }, [isError])
 
   useEffect(() => {
     if (bottomRef.current)
