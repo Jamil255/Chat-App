@@ -5,15 +5,13 @@ import {
   REFETCH_CHATS,
 } from '../constants/event.js'
 import chatModel from '../models/chatSchema.js'
+import messageModel from '../models/messageSchema.js'
 import userModel from '../models/userSchema.js'
-import { emitEvent } from '../utills/index.js'
 import {
   deleteFileFromCloudinary,
-  getOtherMember,
   uploadFilesToCloudinary,
 } from '../utills/feature.js'
-import { cloudinaryUploader } from '../config/CloudinaryConfig.js'
-import messageModel from '../models/messageSchema.js'
+import { emitEvent } from '../utills/index.js'
 const newGroupChat = async (req, res) => {
   try {
     const { name, members } = req.body
@@ -424,7 +422,7 @@ const renameGroup = async (req, res) => {
 }
 const deleteChat = async (req, res) => {
   try {
-    const chatId = req.params.id
+    const chatId = req.params.chatId
     const chat = await chatModel.findById(chatId)
     if (!chat) {
       return res.status(400).json({
@@ -433,18 +431,19 @@ const deleteChat = async (req, res) => {
       })
     }
     const members = chat.members
-    if (chat?.groupChat && chat?.creator.toString() !== req.user.toString()) {
+    if (chat?.groupChat) {
       return res.status(403).json({
         message: 'you are not allow to delete the group',
         status: false,
       })
     }
-    if (!chat?.groupChat && chat?.members?.includes(req.user.toString())) {
+    if (!chat?.groupChat && !members?.includes(req.user.toString())) {
       return res.status(403).json({
-        message: 'you are not allow to delete the chat',
+        message: 'you are not allowed to delete the chat',
         status: false,
       })
     }
+
     const sendWithAttachment = await messageModel.find({
       chat: chatId,
       attachments: { $exists: true, $ne: [] },
@@ -459,7 +458,7 @@ const deleteChat = async (req, res) => {
       chat.deleteOne(),
       messageModel.deleteMany({ chat: chatId }),
     ])
-
+    emitEvent(req, ALERT, members)
     res.status(200).json({
       message: 'Chat delete is successfully',
       status: true,
@@ -525,15 +524,15 @@ const getMessage = async (req, res) => {
 }
 
 export {
-  newGroupChat,
+  addMember,
+  deleteChat,
+  getChatDetails,
+  getMessage,
   getMyChats,
   getMyGroup,
-  addMember,
-  removeMember,
   leaveGroup,
-  sendAttachment,
-  getChatDetails,
+  newGroupChat,
+  removeMember,
   renameGroup,
-  deleteChat,
-  getMessage,
+  sendAttachment,
 }
