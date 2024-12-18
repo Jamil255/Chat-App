@@ -91,7 +91,7 @@ const DoughnutChart = ({ value = [], labels = [] }) => {
   const data = {
     datasets: [
       {
-        data: [122,202],
+        data: value,
         labels: ['single Chats', 'group Chats'],
         backgroundColor: [purpleLight, orangeLight],
         hoverBackgroundColor: [purple, orange],

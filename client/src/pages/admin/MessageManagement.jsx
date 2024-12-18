@@ -1,5 +1,5 @@
 import { useFetchData } from '6pp'
-import { Avatar, Box, Stack } from '@mui/material'
+import { Avatar, Box, Skeleton, Stack } from '@mui/material'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 import Table from '../../components/shared/table/index'
@@ -7,6 +7,8 @@ import AdminLayout from '../../components/layout/AdminLayout'
 import { dashboardData } from '../../constants/sampleData'
 import { fileFormat, transformImage } from '../../lib/feature'
 import RenderAttachment from '../../components/shared/renderAttach'
+import { useGetAllMessageQuery } from '../../redux/api/api'
+import { useErrors } from '../../hook'
 const columns = [
   {
     field: 'id',
@@ -86,10 +88,12 @@ const columns = [
 
 const MessageManagement = () => {
   const [rows, setRows] = useState([])
-
+  const { data, isLoading, isError, error } = useGetAllMessageQuery()
+  console.log(data)
+  useErrors([{ isError, error }])
   useEffect(() => {
     setRows(
-      dashboardData?.messages.map((i) => ({
+      data?.transformedData?.map((i) => ({
         ...i,
         id: i._id,
         sender: {
@@ -99,16 +103,20 @@ const MessageManagement = () => {
         createdAt: moment(i.createdAt).format('MMMM Do YYYY, h:mm:ss a'),
       }))
     )
-  }, [])
+  }, [data])
 
   return (
     <AdminLayout>
-      <Table
-        heading={'All Messages'}
-        columns={columns}
-        rows={rows}
-        rowHeight={200}
-      />
+      {isLoading ? (
+        <Skeleton height={'100vh'} />
+      ) : (
+        <Table
+          heading={'All Messages'}
+          columns={columns}
+          rows={rows}
+          rowHeight={200}
+        />
+      )}
     </AdminLayout>
   )
 }

@@ -1,10 +1,13 @@
 import { useFetchData } from '6pp'
-import { Avatar, Skeleton, } from '@mui/material'
+import { Avatar, Skeleton } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import AdminLayout from '../../components/layout/AdminLayout'
 import { dashboardData } from '../../constants/sampleData'
 import { transformImage } from '../../lib/feature'
 import Table from '../../components/shared/table'
+import { useGetAllUsersQuery } from '../../redux/api/api'
+import { useErrors } from '../../hook'
+
 const columns = [
   {
     field: 'id',
@@ -29,8 +32,8 @@ const columns = [
     width: 200,
   },
   {
-    field: 'username',
-    headerName: 'Username',
+    field: 'userName',
+    headerName: 'userName',
     headerClassName: 'table-header',
     width: 200,
   },
@@ -49,20 +52,26 @@ const columns = [
 ]
 const UserManagement = () => {
   const [rows, setRows] = useState([])
-
+  const { data, isLoading, error, isError } = useGetAllUsersQuery()
+  console.log(data?.message)
+  useErrors([{ error, isError }])
   useEffect(() => {
     setRows(
-      dashboardData?.users.map((i) => ({
+      data?.message?.map((i) => ({
         ...i,
         id: i._id,
         avatar: transformImage(i.avatar, 50),
       }))
     )
-  }, [])
+  }, [data])
 
   return (
     <AdminLayout>
-      <Table heading={'All Users'} columns={columns} rows={rows} />
+      {isLoading ? (
+        <Skeleton height={'100vh'} />
+      ) : (
+        <Table heading={'All Users'} columns={columns} rows={rows} />
+      )}
     </AdminLayout>
   )
 }

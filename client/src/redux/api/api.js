@@ -147,6 +147,34 @@ const api = createApi({
       }),
       invalidatesTags: ['Chat'],
     }),
+    getAllStats: builder.query({
+      query: () => ({
+        url: '/admin/stats',
+        credentials: 'include',
+      }),
+      keepUnusedDataFor: 0,
+    }),
+    getAllUsers: builder.query({
+      query: () => ({
+        url: '/admin/users',
+        credentials: 'include',
+      }),
+      keepUnusedDataFor: 0,
+    }),
+    getAllChats: builder.query({
+      query: () => ({
+        url: '/admin/chats',
+        credentials: 'include',
+      }),
+      keepUnusedDataFor: 0,
+    }),
+    getAllMessage: builder.query({
+      query: () => ({
+        url: '/admin/message',
+        credentials: 'include',
+      }),
+      keepUnusedDataFor: 0,
+    }),
   }),
 })
 export default api
@@ -166,5 +194,10 @@ export const {
   useRemoveGroupMemberMutation,
   useAddGroupMemberMutation,
   useLeaveGroupMutation,
-  useDeleteChatMutation,
+    useDeleteChatMutation,
+    useGetAllStatsQuery,
+    useGetAllUsersQuery,
+    useGetAllChatsQuery,
+    useGetAllMessageQuery
+  
 } = api

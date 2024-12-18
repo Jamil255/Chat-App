@@ -21,7 +21,7 @@ const adminLogin = async (req, res) => {
         maxAge: 1000 * 60 * 15,
       })
       .json({
-        message: "Welcome Boss",
+        message: 'Welcome Boss',
         status: true,
       })
   } catch (error) {
@@ -162,12 +162,13 @@ const allMessage = async (req, res) => {
 
 const getDashboardStats = async (req, res) => {
   try {
-    const [groupCount, userCount, chatCount, messageCount] = await Promise.all([
-      chatModel.countDocuments({ groupChat: true }),
-      userModel.countDocuments(),
-      chatModel.countDocuments(),
-      messageModel.countDocuments(),
-    ])
+    const [groupCount, userCount, messageCount, totalChatsCount] =
+      await Promise.all([
+        chatModel.countDocuments({ groupChat: true }),
+        userModel.countDocuments(),
+        chatModel.countDocuments(),
+        messageModel.countDocuments(),
+      ])
     const today = new Date()
     const last7Day = new Date()
     last7Day.setDate(last7Day.getDate() - 7)
@@ -190,7 +191,7 @@ const getDashboardStats = async (req, res) => {
     return res.status(200).json({
       groupCount,
       userCount,
-      chatCount,
+      totalChatsCount,
       messageCount,
       messageChart: messages,
     })
