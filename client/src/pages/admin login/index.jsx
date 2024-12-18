@@ -1,20 +1,26 @@
-import React, { useEffect } from 'react'
-import { bgGradient } from '../../constants/color'
-import { Button, Container, Paper, TextField, Typography } from '@mui/material'
 import { useInputValidation, useStrongPassword } from '6pp'
+import { Button, Container, Paper, TextField, Typography } from '@mui/material'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { bgGradient } from '../../constants/color'
+import { useDispatch, useSelector } from 'react-redux'
+import { adminLogin, getAdmin } from '../../redux/thunks'
 
-const isAdmin = true
 const AdminLogin = () => {
-  const sceretKey = useStrongPassword()
+    const { isAdmin } = useSelector((state) => state.signup)
+    console.log("BEHANCHADO",isAdmin)
+  const dispatch = useDispatch()
+  const sceretKey = useInputValidation()
   const navigate = useNavigate()
   const handleAdminLogin = (e) => {
     e.preventDefault()
-    console.log('sceret key', sceretKey.value)
+    dispatch(adminLogin(sceretKey.value))
   }
-    useEffect(() => {
-        if (isAdmin) navigate("/admin/dashboard")
- },[])
+  useEffect(() => {
+      dispatch(getAdmin())
+      if (isAdmin) navigate('/admin/dashboard')
+  }, [dispatch])
+  if (isAdmin) navigate('/admin/dashboard')
   return (
     <div
       style={{

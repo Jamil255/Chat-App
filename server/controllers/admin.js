@@ -21,7 +21,7 @@ const adminLogin = async (req, res) => {
         maxAge: 1000 * 60 * 15,
       })
       .json({
-        message: 'admin successfully authenticated',
+        message: "Welcome Boss",
         status: true,
       })
   } catch (error) {

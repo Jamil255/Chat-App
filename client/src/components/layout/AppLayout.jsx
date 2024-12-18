@@ -74,9 +74,7 @@ const AppLayout = () => (WrappedComponent) => {
     return (
       <>
         <Tittle />
-        <DeleteChatMenu
-          deleteMenuAnchor={deleteMenuAnchor}
-        />
+        <DeleteChatMenu deleteMenuAnchor={deleteMenuAnchor} />
         {isLoading ? (
           <Skeleton />
         ) : (

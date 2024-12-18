@@ -19,6 +19,8 @@ import {
 import React, { useState } from 'react'
 import { Link as LinkComponent, Navigate, useLocation } from 'react-router-dom'
 import { grayColor, matBlack } from '../../constants/color'
+import { useDispatch, useSelector } from 'react-redux'
+import { adminLogout } from '../../../../server/controllers/admin'
 const Link = styled(LinkComponent)`
   text-decoration: none;
   border-radius: 2rem;
@@ -53,8 +55,10 @@ const adminTabs = [
 ]
 
 const Sidebar = ({ w = '100%' }) => {
+    const dispatch=useDispatch()
   const location = useLocation()
-  const logoutHandler = () => {
+    const logoutHandler = () => {
+        dispatch(adminLogout())
     console.log('logoutHandler')
   }
 
@@ -98,11 +102,13 @@ const Sidebar = ({ w = '100%' }) => {
 }
 
 const AdminLayout = ({ children }) => {
+  const { isAdmin } = useSelector((state) => state.signup)
   const [isMobile, setIsMobile] = useState(false)
 
   const handleMobile = () => setIsMobile(!isMobile)
 
   const handleClose = () => setIsMobile(false)
+  if (!isAdmin) return <Navigate to="/admin" />
   return (
     <Grid container minHeight={'100vh'}>
       <Box

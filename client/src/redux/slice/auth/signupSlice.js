@@ -1,6 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { adminLogin, getAdmin } from '../../thunks'
+import { toast } from 'react-hot-toast'
 const initialState = {
-  data:true,
+  data: true,
   isAdmin: false,
   isLoading: true,
 }
@@ -8,15 +10,36 @@ const signupSlice = createSlice({
   name: 'signup',
   initialState,
   reducers: {
-      userExists: (state, action) => {
+    userExists: (state, action) => {
       state.data = action.payload
       state.isLoading = false
     },
     userNotExists: (state, action) => {
-      (state.data = null), (state.isLoading = false)
+      ;(state.data = null), (state.isLoading = false)
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(adminLogin.fulfilled, (state, action) => {
+      state.isAdmin = true
+      toast.success(action.payload)
+    })
+    builder.addCase(adminLogin.rejected, (state, action) => {
+      state.isAdmin = false
+      toast.error(action.error.message)
+    })
+    builder.addCase(getAdmin.rejected, (state, action) => {
+      state.isAdmin = false
+    })
+      builder.addCase(getAdmin.fulfilled, (state, action) => {
+        console.log(action.payload)
+      if (action.payload) {
+        state.isAdmin = true
+      } else {
+        state.isAdmin = false
+      }
+    })
   },
 })
 
 export default signupSlice
-export const {userExists,userNotExists }=signupSlice.actions
+export const { userExists, userNotExists } = signupSlice.actions
