@@ -18,6 +18,8 @@ import {
   NEW_MESSAGE,
   START_TYPING,
   STOP_TYPING,
+  CHAT_JOINED,
+  CHAT_LEAVED
 } from '../../constants/event.js'
 import { useErrors, useSocketEvents } from '../../hook/index.jsx'
 import {
@@ -108,12 +110,14 @@ const Chats = ({ chatId }) => {
   }, [messages])
 
   useEffect(() => {
+    socket.emit(CHAT_JOINED, { userId: user?.data._id, members });
     dispatch(deletMessagesAlert(chatId))
     return () => {
       setMessage('')
       setMessages([])
       setPage(1)
       setOldMessage([])
+      socket.emit(CHAT_LEAVED,{userId:user?.data?._id,members})
     }
   }, [chatId])
 

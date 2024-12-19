@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef,useState } from 'react'
 import Header from './Header'
 import Tittle from '../shared/tittle'
 import { Drawer, Grid, Skeleton } from '@mui/material'
@@ -18,6 +18,7 @@ import {
   NEW_MESSAGE_ALERT,
   NEW_REQUEST,
   REFETCH_CHATS,
+  ONLINE_USERS
 } from '../../constants/event.js'
 import {
   incrementNotification,
@@ -34,10 +35,12 @@ const AppLayout = () => (WrappedComponent) => {
 
     const { isMobile } = useSelector((state) => state.misc)
     const { newMessagesAlert } = useSelector((state) => state.chat)
+
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const socket = getSocket()
 
+    const[onlineUsers,setOnlineUsers]=useState([])
     const { isLoading, error, isError, refetch, data } = useMyChatsQuery()
     const handleMobileClose = () => dispatch(setIsMobile(false))
     useErrors([{ isError, error }])
@@ -55,6 +58,9 @@ const AppLayout = () => (WrappedComponent) => {
     const newRequestListener = useCallback(() => {
       dispatch(incrementNotification())
     }, [])
+    const onlineUserListener = useCallback((data) => {
+      setOnlineUsers(data)
+    }, [])
 
     const newRefetchListener = useCallback(() => {
       refetch()
@@ -64,6 +70,7 @@ const AppLayout = () => (WrappedComponent) => {
       [NEW_MESSAGE_ALERT]: newMessagesAlretListener,
       [NEW_REQUEST]: newRequestListener,
       [REFETCH_CHATS]: newRefetchListener,
+      [ONLINE_USERS]: onlineUserListener,
     }
     useSocketEvents(socket, eventListeners)
     const handleChatDelete = (e, chatId, groupChat) => {
@@ -93,7 +100,7 @@ const AppLayout = () => (WrappedComponent) => {
               chats={data?.chats}
               chatId={chatId}
               newMessagesAlert={newMessagesAlert}
-              onlineUsers={['1', '2', '3']}
+              onlineUsers={onlineUsers}
               handleChatDelete={handleChatDelete}
             />
           </Drawer>
@@ -116,7 +123,7 @@ const AppLayout = () => (WrappedComponent) => {
                 chats={data?.chats}
                 chatId={chatId}
                 newMessagesAlert={newMessagesAlert}
-                onlineUsers={['1', '2', '3']}
+                onlineUsers={onlineUsers}
                 handleChatDelete={handleChatDelete}
               />
             )}
