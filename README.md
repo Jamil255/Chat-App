@@ -51,7 +51,7 @@ A simple and interactive chat application designed to make online communication 
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/your-repo/chat-app.git
+git clone https://github.com/Jamil255/Chat_App.git
 cd chat-app
 ```
 
