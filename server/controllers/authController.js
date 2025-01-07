@@ -12,13 +12,12 @@ const signupController = async (req, res) => {
     const file = req.file
     // Upload the file to Cloudinary
     const result = await uploadFilesToCloudinary([file])
-console.log(result)
     // Create the user in the database
     const data = await userModel.create({
       name,
       userName,
       password,
-      avatar:result[0],
+      avatar: result[0],
       bio,
     })
     const token = jwt.sign(
