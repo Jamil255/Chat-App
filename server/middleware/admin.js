@@ -3,7 +3,7 @@ const isAdmin = (req, res, next) => {
   const tokens = req.cookies["admin-token"]
   if (!tokens)
     return res.status(401).json({
-      message: 'only  login to  access this route',
+      message: 'unauthorized access. please login first',
       status: false,
     })
   const secretKey = jwt.verify(tokens, process.env.SECRET_KEY)

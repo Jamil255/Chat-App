@@ -4,6 +4,7 @@ import requestModel from '../models/request.js'
 import { emitEvent } from '../utills/index.js'
 import { getOtherMember } from '../utills/feature.js'
 import { NEW_REQUEST, REFETCH_CHATS } from '../constants/event.js'
+
 const searchHandler = async (req, res) => {
   try {
     const { name = '' } = req.query
