@@ -9,9 +9,7 @@ export const getOtherMember = (members = [], userId) => {
 const getBase64 = (file) =>
   `data:${file.mimetype};base64,${file.buffer.toString('base64')}`
 
-
-
- export const uploadFilesToCloudinary = async (files = []) => {
+export const uploadFilesToCloudinary = async (files = []) => {
   const uploadPromises = files.map((file) => {
     return new Promise((resolve, reject) => {
       cloudinary.uploader.upload(

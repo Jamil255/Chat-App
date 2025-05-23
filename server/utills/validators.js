@@ -29,7 +29,6 @@ const loginValidator = () => [
   body('userName', 'Please Enter Username').notEmpty(),
   body('password', 'Please Enter Password').notEmpty(),
 ]
-
 const newGroupValidator = () => [
   body('name', 'Please Enter Name').notEmpty(),
   body('members')
