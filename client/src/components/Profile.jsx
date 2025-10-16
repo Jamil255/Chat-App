@@ -5,7 +5,6 @@ import {
 } from '@mui/icons-material'
 import { Avatar, Stack, Typography } from '@mui/material'
 import moment from 'moment'
-import React from 'react'
 import { useSelector } from 'react-redux'
 import { transformImage } from '../lib/feature'
 const Profile = ({ user }) => {

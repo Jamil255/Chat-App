@@ -1,23 +1,23 @@
-import {
-  Dialog,
-  DialogTitle,
-  IconButton,
-  InputAdornment,
-  List,
-  Stack,
-  TextField,
-} from '@mui/material'
-import React, { useEffect, useState } from 'react'
-import { Search as SearchIcon } from '@mui/icons-material'
 import { useInputValidation } from '6pp'
-import UserItem from './shared/userItem'
+import { Search as SearchIcon } from '@mui/icons-material'
 import CloseIcon from '@mui/icons-material/Close'
-import { useSelector } from 'react-redux'
 import {
-  useLazySearchUserQuery,
-  useSendFriendRequestMutation,
-} from '../redux/api/api'
+    Dialog,
+    DialogTitle,
+    IconButton,
+    InputAdornment,
+    List,
+    Stack,
+    TextField,
+} from '@mui/material'
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useAsyncMutation } from '../hook'
+import {
+    useLazySearchUserQuery,
+    useSendFriendRequestMutation,
+} from '../redux/api/api'
+import UserItem from './shared/userItem'
 const Search = ({ onClose }) => {
   const [user, setUser] = useState([])
   const search = useInputValidation('')
